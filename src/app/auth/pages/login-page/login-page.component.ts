@@ -66,7 +66,7 @@ export class LoginPageComponent implements OnInit {
           });
 
           dialogRef.afterClosed().subscribe(result => {
-            console.log('[📦 LOGIN] Resultado del modal RegisterDialog:', result); 
+            console.log('[📦 LOGIN] 1Resultado del modal RegisterDialog:', result); 
             if (result) {
               this.doLogin(username, result);
             }
