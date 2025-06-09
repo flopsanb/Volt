@@ -56,28 +56,30 @@ export class LoginPageComponent implements OnInit {
 
       try {
         const userExists = await this.authService.checkUser(username).toPromise();
+        console.log('[✅ LOGIN] Respuesta del backend (checkUser):', userExists);
         if (userExists) {
           const dialogRef = this.dialog.open(RegisterDialogComponent, {
             width: '400px',
             data: { username },
             disableClose: true,
             autoFocus: true,
-            panelClass: 'custom-dialog-container'
           });
 
           dialogRef.afterClosed().subscribe(result => {
+            console.log('[📦 LOGIN] Resultado del modal RegisterDialog:', result); 
             if (result) {
               this.doLogin(username, result);
             }
           });
 
         } else {
+          console.warn('[⚠️ LOGIN] Usuario no encontrado');
           this.error = 'El usuario no está registrado';
           this.snackBar.open('No hay ningún usuario con ese nombre', 'Cerrar', { duration: 5000 });
         }
 
-      } catch (_) {
-        // No se muestra el error técnico al usuario final
+      } catch (error) {
+        console.error('[❌ LOGIN] Error al conectar con el servidor:', error);
         this.snackBar.open('Error al conectar con el servidor', 'Cerrar', { duration: 5000 });
       }
     }
