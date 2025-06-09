@@ -1,0 +1,28 @@
+<!-- Contenedor principal del formulario para añadir empresa -->
+<div class="container">
+  <!-- Título del diálogo -->
+  <h3 mat-dialog-title>Añadir Empresa</h3>
+
+  <!-- Formulario reactivo vinculado al FormGroup 'form' -->
+  <form [formGroup]="form" class="mat-dialog-content">
+
+    <!-- Campo de texto para el nombre de la empresa -->
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Nombre de la empresa</mat-label>
+      <input matInput formControlName="nombre_empresa" placeholder="Indica el nombre">
+    </mat-form-field>
+
+    <!-- Campo de texto para el logo (opcional) -->
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>URL del logo (opcional)</mat-label>
+      <input matInput formControlName="logo_url" placeholder="https://..." />
+    </mat-form-field>
+
+    <!-- Botones de acción del diálogo: Cancelar y Guardar -->
+    <div mat-dialog-actions align="end">
+      <button mat-button (click)="cancel()">Cancelar</button>
+      <!-- Botón de guardar deshabilitado si el formulario no es válido -->
+      <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="form.invalid">Guardar</button>
+    </div>
+  </form>
+</div>

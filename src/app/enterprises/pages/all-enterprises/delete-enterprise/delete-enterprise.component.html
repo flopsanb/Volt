@@ -1,0 +1,13 @@
+<!-- Diálogo de confirmación para eliminar una empresa -->
+<h2 mat-dialog-title>¿Eliminar empresa?</h2>
+
+<!-- Contenido del diálogo de eliminación con nombre dinámico de la empresa -->
+<mat-dialog-content>
+  <p>¿Estás seguro de que quieres eliminar <strong>{{ empresa.nombre_empresa }}</strong>?</p>
+</mat-dialog-content>
+
+<!-- Botones de acción: cancelar o confirmar la eliminación -->
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancelar</button>
+  <button mat-raised-button color="warn" (click)="delete()">Eliminar</button>
+</mat-dialog-actions>

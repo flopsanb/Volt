@@ -1,0 +1,17 @@
+@use '@angular/material' as mat;
+
+$my-primary: mat.define-palette(mat.$gray-palette, 800); // Gris oscuro
+$my-accent: mat.define-palette(mat.$yellow-palette, 600); // Amarillo intenso
+$my-warn: mat.define-palette(mat.$red-palette);
+
+$my-theme: mat.define-light-theme((
+  color: (
+    primary: $my-primary,
+    accent: $my-accent,
+    warn: $my-warn,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
+
+@include mat.all-component-themes($my-theme);

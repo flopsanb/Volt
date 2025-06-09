@@ -1,0 +1,15 @@
+<div class="container">
+  <!-- Título del diálogo -->
+  <h2>Eliminar Usuario</h2>
+
+  <!-- Mensaje de advertencia con nombre del usuario a eliminar -->
+  <div id="contain">
+    <p>¿Estás seguro de que deseas eliminar al usuario <strong>{{ data.usuario }}</strong>?</p>
+  </div>
+
+  <!-- Botones para confirmar o cancelar la eliminación -->
+  <mat-dialog-actions align="end">
+    <button mat-raised-button color="warn" (click)="confirmar()">Eliminar</button>
+    <button mat-button mat-dialog-close>Cancelar</button>
+  </mat-dialog-actions>
+</div>

@@ -1,0 +1,21 @@
+.main-wrapper {
+  text-align: center;
+  padding: 2rem;
+
+  h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .sub {
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    color: #555;
+  }
+
+  .proyecto-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,64 @@
+mat-toolbar {
+  background-color: #5e5d5d; // Gris oscuro
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.usuario {
+  margin-left: auto;
+  margin-right: 50px;
+  font-weight: bold;
+  color: white;
+}
+
+button[mat-button] {
+  color: rgb(56, 54, 54);
+  background-color: #fdd835; // Amarillo
+  border-radius: 20px;
+  font-weight: bold;
+  padding: 6px 16px;
+  margin-left: 15px;
+}
+
+button[mat-button]:hover {
+  background-color: #fff176;
+}
+
+mat-sidenav {
+  background-color: #ffffff; // Lateral gris
+  color: white;
+}
+
+mat-nav-list a {
+  color: white !important;
+  font-weight: 500;
+  padding: 12px;
+}
+
+mat-nav-list mat-icon {
+  color: #5a5a5a; // Amarillo
+}
+
+mat-icon {
+  font-size: 28px; // Más grandes
+}
+
+::ng-deep .cdk-overlay-pane {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 10000 !important;
+}
+
+::ng-deep .cdk-global-overlay-wrapper {
+  align-items: center !important;
+  justify-content: center !important;
+  display: flex !important;
+}
+
+.main-container {
+  transform: none !important; // 💀 Esto anula el stacking context creado por Angular Material
+}

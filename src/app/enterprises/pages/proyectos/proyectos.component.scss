@@ -1,0 +1,61 @@
+:host {
+  display: block;
+  padding: 2rem;
+  background-color: #e4e4e4;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+  gap: 1rem;
+
+  button {
+    background-color: #fdd835;
+    color: #000;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+    mat-icon {
+      margin-right: 8px;
+    }
+
+    &:hover {
+      background-color: #fff176;
+    }
+  }
+
+  .select-empresa {
+    min-width: 260px;
+
+  
+  }
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+h2, h3 {
+  color: #333;
+  font-weight: 600;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+}
+
+mat-divider {
+  margin-bottom: 1rem;
+  background-color: #ccc;
+}
+
+.our-projects,
+.all-projects {
+  padding: 0 1rem;
+}

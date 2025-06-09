@@ -1,0 +1,48 @@
+@use './styles/themes/custom-theme' as *;
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f5f5f5;
+  overflow-x: hidden;
+}
+
+/* No tocamos el contenedor del diálogo directamente */
+::ng-deep .mat-dialog-container {
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  max-height: 90vh;
+  overflow: auto;
+}
+
+/* Aseguramos que backdrop y pane estén encima */
+::ng-deep .cdk-overlay-backdrop {
+  z-index: 10000 !important;
+}
+
+::ng-deep .cdk-overlay-pane {
+  z-index: 10001 !important;
+}
+
+/* Panel de select (mat-select) */
+::ng-deep .mat-select-panel {
+  z-index: 10010 !important;
+  position: absolute !important;
+}
+
+::ng-deep .mat-snack-bar-container {
+  position: fixed !important;
+  bottom: 24px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 20000 !important;
+}
+
+::ng-deep body,
+::ng-deep html,
+::ng-deep app-root {
+  display: block !important;
+  align-items: initial !important;
+  justify-content: initial !important;
+}

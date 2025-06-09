@@ -1,0 +1,74 @@
+<div class="container">
+  <!-- Título del modal para añadir un nuevo usuario -->
+  <h3 mat-dialog-title>Añadir Usuario</h3>
+
+  <!-- Formulario usando Template-driven forms con validación -->
+  <form class="mat-dialog-content" #formUsuario="ngForm">
+
+    <!-- Campo: Nombre de usuario -->
+    <div class="form">
+      <mat-form-field appearance="fill" color="accent">
+        <mat-label>Usuario</mat-label>
+        <input matInput name="usuario" [(ngModel)]="usuario.usuario" required />
+      </mat-form-field>
+    </div>
+
+    <!-- Campo: Contraseña (obligatoria al crear usuario) -->
+    <div class="form">
+      <mat-form-field appearance="fill" color="accent">
+        <mat-label>Contraseña</mat-label>
+        <input matInput type="password" name="password" [(ngModel)]="password" required />
+      </mat-form-field>
+    </div>
+
+    <!-- Campo: Nombre público del usuario -->
+    <div class="form">
+      <mat-form-field appearance="fill" color="accent">
+        <mat-label>Nombre público</mat-label>
+        <input matInput name="nombre_publico" [(ngModel)]="usuario.nombre_publico" />
+      </mat-form-field>
+    </div>
+
+    <!-- Selector: Rol del usuario (cargado dinámicamente) -->
+    <div class="form">
+      <mat-form-field appearance="fill" color="accent">
+        <mat-label>Rol</mat-label>
+        <mat-select name="id_rol" [(ngModel)]="usuario.id_rol" required>
+          <mat-option *ngFor="let rol of roles" [value]="rol.id_rol">
+            {{ rol.nombre_rol }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Campo: Email del usuario -->
+    <div class="form">
+      <mat-form-field appearance="fill" color="accent">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" name="email" [(ngModel)]="usuario.email" required />
+      </mat-form-field>
+    </div>
+
+    <!-- Campo: Observaciones adicionales -->
+    <div class="form">
+      <mat-form-field appearance="fill" color="accent">
+        <mat-label>Observaciones</mat-label>
+        <textarea matInput name="observaciones" [(ngModel)]="usuario.observaciones" rows="2"></textarea>
+      </mat-form-field>
+    </div>
+
+    <!-- Checkbox: Usuario habilitado o no -->
+    <div class="form">
+      <mat-checkbox [(ngModel)]="usuario.habilitado" name="habilitado" [ngModelOptions]="{standalone: true}">
+        Habilitado
+      </mat-checkbox>
+    </div>
+
+    <!-- Botones de acción: Cancelar o guardar usuario -->
+    <div mat-dialog-actions align="end">
+      <button mat-button (click)="cancel()">Cancelar</button>
+      <button mat-raised-button color="primary" (click)="saveChanges()" [disabled]="!formUsuario.form.valid">Guardar</button>
+    </div>
+
+  </form>
+</div>

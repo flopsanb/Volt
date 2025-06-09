@@ -1,0 +1,41 @@
+<mat-card class="project-card">
+  <mat-card-header>
+    <mat-icon mat-card-avatar>bar_chart</mat-icon>
+    
+    <!-- Título de la tarjeta: nombre del proyecto -->
+    <mat-card-title>{{ proyecto.nombre_proyecto }}</mat-card-title>
+    
+    <!-- Subtítulo con el estado del proyecto -->
+    <mat-card-subtitle>
+      <span *ngIf="proyecto.visible === 1" class="badge visible">Visible</span>
+      <span *ngIf="proyecto.habilitado === 1" class="badge enabled">Habilitado</span>
+      <span *ngIf="proyecto.visible === 0" class="badge not-visible">Oculto</span>
+      <span *ngIf="proyecto.habilitado === 0" class="badge disabled">Deshabilitado</span>
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-actions>
+    <!-- Acción común para todos los usuarios: ver informe del proyecto -->
+    <button mat-button color="primary" (click)="verInforme(proyecto.id_proyecto)">
+      <mat-icon>visibility</mat-icon>
+      Ver informe
+    </button>
+
+    <!-- Botones condicionales según los permisos definidos en Inputs -->
+    <button *ngIf="canEdit" mat-icon-button color="accent" (click)="edit.emit(proyecto)">
+      <mat-icon>edit</mat-icon>
+    </button>
+
+    <button *ngIf="canDelete" mat-icon-button color="warn" (click)="delete.emit(proyecto)">
+      <mat-icon>delete</mat-icon>
+    </button>
+
+    <button *ngIf="canToggleVisibility" mat-icon-button (click)="toggleVisibility.emit(proyecto)">
+      <mat-icon>{{ proyecto.visible === 1 ? 'visibility_off' : 'visibility' }}</mat-icon>
+    </button>
+
+    <button *ngIf="canToggleEnabled" mat-icon-button (click)="toggleEnabled.emit(proyecto)">
+      <mat-icon>{{ proyecto.habilitado === 1 ? 'block' : 'check_circle' }}</mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>

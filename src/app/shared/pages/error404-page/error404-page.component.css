@@ -1,0 +1,38 @@
+/* Estilos específicos para el componente Error404PageComponent */
+
+.error404-container {
+    text-align: center;
+    margin-top: 100px;
+    font-family: Arial, sans-serif; /* Fuente legible y común en interfaces web */
+}
+
+.error404-container h1 {
+    font-size: 48px;
+    color: #ff3b30; /* Color rojo para destacar el mensaje de error */
+    margin-bottom: 20px; /* Espaciado inferior para separar del párrafo */
+}
+
+.error404-container p {
+    font-size: 18px;
+    color: #555; /* Gris medio para mejorar la lectura del mensaje */
+    margin-bottom: 20px;
+}
+
+.error404-container .back-home-link {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007bff; /* Color azul estándar para botones */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px; /* Bordes redondeados para un diseño más moderno */
+    transition: background-color 0.3s; /* Mejora la experiencia al hacer hover */
+}
+
+.error404-container .back-home-link:hover {
+    background-color: #0056b3; /* Oscurece el botón al pasar el ratón */
+}
+
+.error404-container .back-home-link:focus {
+    outline: 2px solid #ff3b30; /* Contorno visible para mejorar la accesibilidad */
+}

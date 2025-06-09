@@ -1,0 +1,57 @@
+<!-- Formulario para añadir un nuevo proyecto -->
+<div class="container">
+  <h3 mat-dialog-title>Añadir proyecto</h3>
+
+  <!-- Formulario del proyecto -->
+  <form class="mat-dialog-content" #formProyecto="ngForm">
+
+    <!-- Nombre del proyecto -->
+    <div class="form">
+      <mat-form-field appearance="fill" color="accent">
+        <mat-label>Nombre del proyecto</mat-label>
+        <input matInput name="nombre_proyecto" [(ngModel)]="proyecto.nombre_proyecto" required />
+      </mat-form-field>
+    </div>
+
+    <!-- Iframe embebido del informe -->
+    <div class="form">
+      <mat-form-field appearance="fill" color="accent">
+        <mat-label>Iframe del informe</mat-label>
+        <textarea matInput rows="4" name="iframe_proyecto" [(ngModel)]="proyecto.iframe_proyecto" required></textarea>
+      </mat-form-field>
+    </div>
+
+    <!-- Visibilidad del proyecto -->
+    <div class="form">
+      <mat-checkbox [(ngModel)]="proyecto.visible" name="visible" [ngModelOptions]="{standalone: true}">
+        Visible
+      </mat-checkbox>
+    </div>
+
+    <!-- Disponibilidad del proyecto -->
+    <div class="form">
+      <mat-checkbox [(ngModel)]="proyecto.habilitado" name="habilitado" [ngModelOptions]="{standalone: true}">
+        Habilitado
+      </mat-checkbox>
+    </div>
+
+    <!-- Selección de empresa -->
+    <div class="form">
+      <mat-form-field appearance="fill">
+        <mat-label>Empresa</mat-label>
+        <mat-select [(ngModel)]="proyecto.id_empresa" name="id_empresa" required>
+          <mat-option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">
+            {{ empresa.nombre_empresa }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Botones de acción -->
+    <div mat-dialog-actions align="end">
+      <button mat-button (click)="cancel()">Cancelar</button>
+      <button mat-raised-button color="primary" (click)="saveChanges()" [disabled]="!formProyecto.form.valid">Guardar</button>
+    </div>
+
+  </form>
+</div>

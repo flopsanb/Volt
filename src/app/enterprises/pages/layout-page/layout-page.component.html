@@ -1,0 +1,43 @@
+<!--
+  Layout principal con barra superior y menú lateral.
+  La navegación cambia dinámicamente en base al rol del usuario.
+-->
+<mat-sidenav-container fullscreen class="main-container">
+
+  <!-- Menú lateral (sidebar) -->
+  <mat-sidenav #sidenav mode="push" [ngStyle]="{ width: '250px'}">
+    <mat-toolbar color="warn">
+      <span>Menú</span>
+      <span class="spacer"></span>
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <mat-nav-list>
+      <!-- Lista de rutas del menú -->
+      <a mat-list-item *ngFor="let item of sidebarItems" [routerLink]="item.url" (click)="sidenav.toggle()">
+        <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+        {{ item.label }}
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <!-- Barra superior -->
+  <mat-toolbar color="primary">
+    <button mat-icon-button (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span class="spacer"></span>
+    <span class="usuario">Usuario: {{ nombre_publico }}</span>
+    <button mat-button (click)="onLogout()">
+      Cerrar sesión
+    </button>
+  </mat-toolbar>
+
+  <!-- Contenido de cada ruta -->
+  <div class="container p-2">
+    <router-outlet></router-outlet>
+  </div>
+
+</mat-sidenav-container>

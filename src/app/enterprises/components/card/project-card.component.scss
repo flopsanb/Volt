@@ -1,0 +1,106 @@
+.project-card {
+  background-color: #f9f9f9;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 0;
+  margin: 10px;
+  width: 100%;
+  max-width: 320px;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  mat-card-header {
+    align-items: center;
+    mat-card-avatar {
+      background-color: #fdd835;
+      color: #000;
+    }
+
+    mat-card-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #333;
+    }
+
+    mat-card-subtitle {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+  }
+
+  mat-card-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 0 8px 8px 8px;
+
+    button {
+      margin: 2px 4px;
+
+      &.mat-icon-button {
+        background-color: #f0f0f0;
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: #e0e0e0;
+        }
+
+        mat-icon {
+          color: #333;
+        }
+      }
+    }
+
+    button[color="primary"] {
+      font-weight: bold;
+      background-color: #fdd835;
+      color: #000;
+      border-radius: 20px;
+      padding: 4px 12px;
+
+      &:hover {
+        background-color: #fff176;
+      }
+
+      mat-icon {
+        margin-right: 4px;
+      }
+    }
+  }
+}
+
+.badge {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin: 2px 2px 2px 0;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.visible {
+  background-color: #e0f2f1;
+  color: #00796b;
+}
+
+.enabled {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.not-visible {
+  background-color: #fff3e0;
+  color: #ef6c00;
+}
+
+.disabled {
+  background-color: #ffebee;
+  color: #c62828;
+}

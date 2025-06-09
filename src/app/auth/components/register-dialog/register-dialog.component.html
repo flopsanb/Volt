@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>Introduce tu contraseña</h1>
+
+<div mat-dialog-content>
+  <!-- Campo de entrada para la contraseña. Enlazado con ngModel -->
+  <mat-form-field appearance="fill" class="full-width">
+    <input
+      matInput
+      [(ngModel)]="password"
+      placeholder="Contraseña"
+      type="password"
+      required
+    />
+  </mat-form-field>
+</div>
+
+<div mat-dialog-actions align="end">
+  <!-- Botón para cerrar sin enviar nada -->
+  <button mat-stroked-button color="warn" (click)="onNoClick()">Cancelar</button>
+  <!-- Botón que devuelve la contraseña introducida -->
+  <button mat-raised-button color="primary" (click)="onLogin()">Aceptar</button>
+</div>

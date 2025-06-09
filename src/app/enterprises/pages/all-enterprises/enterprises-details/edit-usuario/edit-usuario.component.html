@@ -1,0 +1,61 @@
+<div class="container">
+  <!-- Título del formulario -->
+  <h2>Editar Usuario</h2>
+
+  <!-- Formulario reactivo con validaciones y envío -->
+  <form [formGroup]="form" (ngSubmit)="save()">
+
+    <!-- Campo: Nombre de usuario -->
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Usuario</mat-label>
+      <input matInput formControlName="usuario" required />
+    </mat-form-field>
+
+    <!-- Campo: Contraseña (solo se actualiza si se indica) -->
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Nueva Contraseña</mat-label>
+      <input matInput type="password" formControlName="password" />
+    </mat-form-field>
+
+    <!-- Campo: Nombre público visible para otros -->
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Nombre Público</mat-label>
+      <input matInput formControlName="nombre_publico" />
+    </mat-form-field>
+
+    <!-- Selector de rol del usuario -->
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Rol</mat-label>
+      <mat-select formControlName="id_rol" required>
+        <!-- Carga dinámica de roles disponibles -->
+        <mat-option *ngFor="let rol of roles" [value]="rol.id_rol">
+          {{ rol.nombre_rol }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Campo: Correo electrónico -->
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" />
+    </mat-form-field>
+
+    <!-- Campo: Observaciones generales -->
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Observaciones</mat-label>
+      <textarea matInput formControlName="observaciones"></textarea>
+    </mat-form-field>
+
+    <!-- Checkbox: Estado de habilitación -->
+    <mat-checkbox formControlName="habilitado">
+      Habilitado
+    </mat-checkbox>
+
+    <!-- Botones de acción (cancelar o guardar cambios) -->
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="cancelar()">Cancelar</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Guardar</button>
+    </mat-dialog-actions>
+
+  </form>
+</div>

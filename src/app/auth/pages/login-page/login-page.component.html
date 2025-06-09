@@ -1,0 +1,27 @@
+<mat-card class="example-card">
+  <mat-card-header>
+    <img src="../../../../assets/logo.png" alt="Logo VoltFencerApp" />
+  </mat-card-header>
+
+  <mat-card-content>
+    <form class="example-form" [formGroup]="loginForm">
+      <mat-form-field appearance="fill">
+        <!-- Input principal del login. Se vincula con el formControlName "username" -->
+        <input
+          matInput
+          placeholder="Nombre de usuario"
+          formControlName="username"
+        />
+      </mat-form-field>
+
+      <mat-card-actions>
+        <!-- Botón que dispara el método acceder() para validar el usuario -->
+        <button mat-raised-button type="submit" (click)="acceder()">Acceder</button>
+      </mat-card-actions>
+    </form>
+    <!-- Spinner que se muestra mientras se realiza una operación asincrónica -->
+    <mat-spinner [style.display]="showSpinner ? 'block' : 'none'"></mat-spinner>
+  </mat-card-content>
+
+  <mat-error *ngIf="error">{{ alerta }}</mat-error>
+</mat-card>

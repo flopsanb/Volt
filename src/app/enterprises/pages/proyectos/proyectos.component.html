@@ -1,0 +1,57 @@
+<!-- Acción superior para añadir proyecto -->
+<div class="project-actions">
+  <!-- Botón de añadir nuevo proyecto (solo visible si el usuario tiene permiso de creación) -->
+  <button mat-raised-button color="primary" *ngIf="permises.add" (click)="addProject()">
+    <mat-icon>add_circle</mat-icon> Añadir nuevo proyecto
+  </button>
+</div>
+
+<!-- Sección de proyectos de la empresa actual -->
+<div class="our-projects" *ngIf="proyectosEmpresa.length">
+  <h2>Nuestros proyectos activos:</h2>
+  <mat-divider></mat-divider>
+
+  <div class="projects-grid">
+    <!-- Tarjetas de proyecto de la empresa actual -->
+    <project-card
+      *ngFor="let proyecto of proyectosEmpresa"
+      [proyecto]="proyecto"
+      [canEdit]="permises.edit"
+      [canDelete]="permises.delete"
+      [canToggleVisibility]="permises.ocultar"
+      [canToggleEnabled]="permises.deshabilitar"
+      (edit)="editProject(proyecto)"
+      (delete)="deleteProject(proyecto)"
+      (toggleVisibility)="toggleVisibility(proyecto)"
+      (toggleEnabled)="toggleEnabled(proyecto)"
+    ></project-card>
+  </div>
+</div>
+
+<!-- Sección de proyectos de otras empresas (solo para superadmin y admin global) -->
+<div class="all-projects" *ngIf="this.esGlobal">
+  <h2>Proyectos de otras empresas:</h2>
+  <mat-divider></mat-divider>
+
+  <!-- Agrupación de proyectos por empresa -->
+  <div *ngFor="let grupo of proyectosOtrasEmpresasPorEmpresa" style="margin-bottom: 2rem;">
+    <!-- Título con el nombre de la empresa -->
+    <h3>Empresa: {{ grupo.nombre_empresa }}</h3>
+    
+    <div class="projects-grid">
+      <!-- Tarjetas de cada proyecto de la empresa actual del grupo -->
+      <project-card
+        *ngFor="let proyecto of grupo.proyectos"
+        [proyecto]="proyecto"
+        [canEdit]="permises.edit"
+        [canDelete]="permises.delete"
+        [canToggleVisibility]="permises.ocultar"
+        [canToggleEnabled]="permises.deshabilitar"
+        (edit)="editProject(proyecto)"
+        (delete)="deleteProject(proyecto)"
+        (toggleVisibility)="toggleVisibility(proyecto)"
+        (toggleEnabled)="toggleEnabled(proyecto)"
+      ></project-card>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+<!-- 
+  Formulario de edición de proyecto. 
+  Se muestra dentro de un mat-dialog.
+-->
+<div class="container">
+  <h3 mat-dialog-title>Editar proyecto</h3>
+
+  <!-- Formulario reactivo con ngModel -->
+  <form class="mat-dialog-content" #formProyecto="ngForm">
+
+    <!-- Campo: Nombre del proyecto -->
+    <div class="form">
+      <mat-form-field appearance="fill" color="accent">
+        <mat-label>Nombre del proyecto</mat-label>
+        <input matInput name="nombre_proyecto" [(ngModel)]="proyecto.nombre_proyecto" required />
+      </mat-form-field>
+    </div>
+
+    <!-- Campo: iframe del informe Power BI -->
+    <div class="form">
+      <mat-form-field appearance="fill" color="accent">
+        <mat-label>Iframe del informe</mat-label>
+        <textarea matInput rows="4" name="iframe_proyecto" [(ngModel)]="proyecto.iframe_proyecto" required></textarea>
+      </mat-form-field>
+    </div>
+
+    <!-- Checkbox: visibilidad del proyecto -->
+    <div class="form">
+      <mat-checkbox [(ngModel)]="proyecto.visible" name="visible" [ngModelOptions]="{standalone: true}">
+        Visible
+      </mat-checkbox>
+    </div>
+
+    <!-- Checkbox: habilitado -->
+    <div class="form">
+      <mat-checkbox [(ngModel)]="proyecto.habilitado" name="habilitado" [ngModelOptions]="{standalone: true}">
+        Habilitado
+      </mat-checkbox>
+    </div>
+
+    <!-- Selector de empresa (solo visible si se cargaron empresas) -->
+    <div class="form" *ngIf="empresas.length > 0">
+      <mat-form-field appearance="fill">
+        <mat-label>Empresa</mat-label>
+        <mat-select [(ngModel)]="proyecto.id_empresa" name="id_empresa" required>
+          <mat-option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">
+            {{ empresa.nombre_empresa }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Acciones del diálogo -->
+    <div mat-dialog-actions align="end">
+      <button mat-button (click)="cancel()">Cancelar</button>
+      <button mat-raised-button color="primary" (click)="saveChanges()" [disabled]="!formProyecto.form.valid">
+        Guardar
+      </button>
+    </div>
+
+  </form>
+</div>

@@ -1,0 +1,26 @@
+<!-- Modal de confirmación para eliminar un proyecto -->
+<div class="container">
+
+  <!-- Título del diálogo -->
+  <h3 mat-dialog-title>Borrar proyecto</h3>
+
+  <!-- Mensaje de advertencia con datos del proyecto -->
+  <p>
+    <strong>¡Atención!</strong> Se eliminará el proyecto:
+    <strong>{{ proyecto.nombre_proyecto }}</strong>
+    de la empresa
+    <strong>{{ proyecto.nombre_empresa }}</strong>.
+  </p>
+
+  <p>
+    Esto sirve para borrar proyectos muy desfasados o creados por error.
+    En cualquier otro caso, es recomendable deshabilitar el proyecto.
+  </p>
+
+  <!-- Acciones: eliminar o cancelar -->
+  <div mat-dialog-actions>
+    <button id="deleteProject" mat-button type="submit" (click)="deleteProject()">Eliminar</button>
+    <button id="onNoClick" mat-button (click)="onNoClick()" tabindex="-1">Cancelar</button>
+  </div>
+
+</div>
