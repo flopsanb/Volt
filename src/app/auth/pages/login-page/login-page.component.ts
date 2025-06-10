@@ -113,11 +113,6 @@ export class LoginPageComponent implements OnInit {
         localStorage.setItem('id_empresa', RESPONSE.data.id_empresa ?? '');
         localStorage.setItem('email', RESPONSE.data.email ?? '');
 
-        this.commonService.headers = new HttpHeaders({
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${RESPONSE.data.token}`
-        });
-
         this.router.navigate(['/enterprises/main']);
 
       } else if (RESPONSE.data?.habilitado === 0) {
