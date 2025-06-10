@@ -27,6 +27,6 @@ import { CredentialsInterceptor } from './interceptors/credentials.interceptor';
       multi: true
     }
   ],
-  bootstrap: [AppComponent]      // Componente raíz que se carga al iniciar la aplicación
+  bootstrap: [AppComponent]      // Componente raíz que se carga al iniciar la aplicación.
 })
 export class AppModule { }
