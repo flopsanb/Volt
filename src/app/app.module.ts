@@ -5,7 +5,9 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+
+import { CredentialsInterceptor } from './interceptors/credentials.interceptor';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,13 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserAnimationsModule,     // Requerido para animaciones de Angular Material
     HttpClientModule             // Permite realizar peticiones HTTP al backend
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CredentialsInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]      // Componente raíz que se carga al iniciar la aplicación
 })
 export class AppModule { }
