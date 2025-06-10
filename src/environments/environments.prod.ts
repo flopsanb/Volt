@@ -3,4 +3,4 @@ export const environments = {
 };
 
 export const URL_BASE = 'https://voltfencerbackend-production.up.railway.app';
-export const URL_API = `${URL_BASE}/api`;
+export const URL_API = `${URL_BASE}/private`;
