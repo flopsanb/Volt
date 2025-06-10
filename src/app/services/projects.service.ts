@@ -17,61 +17,62 @@ const ENDPOINT = 'proyecto';
 })
 export class ProjectService {
 
-  proyectos!: Project[]; // Lista local de proyectos
+  proyectos: Project[] = [];
 
   constructor(
     private http: HttpClient,
-    private commonService: CommonService // Provee los headers de autenticación
+    private commonService: CommonService
   ) {}
 
-  // Obtiene todos los proyectos desde el backend
   getAllProyectos(): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(
       `${URL_API}/${ENDPOINT}.php`,
-      { headers: this.commonService.headers }
+      {
+        headers: this.commonService.headers,
+        withCredentials: true
+      }
     );
   }
 
-  // Envía una solicitud para añadir un nuevo proyecto
-  addProyecto(proyecto: Project) {
-    const body = JSON.stringify(proyecto);
-    return this.http.post<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, body, {
-      headers: this.commonService.headers
-    });
-  }
-
-  // Envía una solicitud para actualizar un proyecto existente
-  editProyecto(proyecto: Project) {
-    const body = JSON.stringify(proyecto);
-    return this.http.put<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, body, {
-      headers: this.commonService.headers
-    });
-  }
-
-  // Envía una solicitud para eliminar un proyecto por su ID
-  deleteProyecto(idProyecto: string | number) {
-    return this.http.delete<ApiResponse>(`${URL_API}/${ENDPOINT}.php?id=${idProyecto}`, {
-      headers: this.commonService.headers
-    });
-  }
-
-  // Elimina un proyecto de la lista local mediante filtrado
-  removeProyecto(idProyecto: number) {
-    this.proyectos = this.proyectos.filter(proyecto => {
-      return Number(proyecto.id_proyecto) !== Number(idProyecto);
-    });
-  }
-
-  // Actualiza un proyecto en la lista local, identificándolo por su ID
-  updateProyecto(proyecto: Project) {
-    let index = null;
-    this.proyectos.filter((proyectoFilter, indexFilter) => {
-      if (proyecto.id_proyecto === proyectoFilter.id_proyecto) {
-        index = indexFilter;
+  addProyecto(proyecto: Project): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(
+      `${URL_API}/${ENDPOINT}.php`,
+      proyecto,
+      {
+        headers: this.commonService.headers,
+        withCredentials: true
       }
-    });
+    );
+  }
 
-    if (index !== null) {
+  editProyecto(proyecto: Project): Observable<ApiResponse> {
+    return this.http.put<ApiResponse>(
+      `${URL_API}/${ENDPOINT}.php`,
+      proyecto,
+      {
+        headers: this.commonService.headers,
+        withCredentials: true
+      }
+    );
+  }
+
+  deleteProyecto(idProyecto: string | number): Observable<ApiResponse> {
+    return this.http.delete<ApiResponse>(
+      `${URL_API}/${ENDPOINT}.php?id=${idProyecto}`,
+      {
+        headers: this.commonService.headers,
+        withCredentials: true
+      }
+    );
+  }
+
+  removeProyecto(idProyecto: number): void {
+    this.proyectos = this.proyectos.filter(p => p.id_proyecto !== idProyecto);
+  }
+
+  updateProyecto(proyecto: Project): void {
+    const index = this.proyectos.findIndex(p => p.id_proyecto === proyecto.id_proyecto);
+    if (index !== -1) {
       this.proyectos[index] = proyecto;
     }
   }

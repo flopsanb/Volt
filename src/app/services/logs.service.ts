@@ -8,11 +8,8 @@ import { CommonService } from './common.service';
 const ENDPOINT = 'logs';
 
 /**
- * Servicio destinado a gestionar el registro de logs del sistema.
- * Estaba previsto para almacenar información sobre acciones de usuarios,
- * accesos y cambios realizados en la plataforma.
- * 
- * Esta funcionalidad no fue implementada completamente en esta versión.
+ * Servicio para la gestión y recuperación de registros de actividad (logs).
+ * Permite consultar acciones realizadas en la plataforma por usuarios.
  */
 @Injectable({
   providedIn: 'root'
@@ -24,10 +21,56 @@ export class LogsService {
     private commonService: CommonService
   ) {}
 
-  // Método previsto para obtener todos los logs (no implementado)
+  /**
+   * Recupera todos los logs del sistema (visible según permisos del usuario).
+   */
   getLogs(): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, {
-      headers: this.commonService.headers
+      headers: this.commonService.headers,
+      withCredentials: true
     });
+  }
+
+  /**
+   * Obtiene logs filtrados por empresa.
+   */
+  getLogsByEmpresa(id_empresa: number): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${URL_API}/${ENDPOINT}.php?id_empresa=${id_empresa}`, {
+      headers: this.commonService.headers,
+      withCredentials: true
+    });
+  }
+
+  /**
+   * Obtiene logs por acción (crear, editar, borrar, login, etc).
+   */
+  getLogsByAction(accion: string): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${URL_API}/${ENDPOINT}.php?accion=${accion}`, {
+      headers: this.commonService.headers,
+      withCredentials: true
+    });
+  }
+
+  /**
+   * Obtiene logs por usuario.
+   */
+  getLogsByUsuario(id_usuario: number): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${URL_API}/${ENDPOINT}.php?id_usuario=${id_usuario}`, {
+      headers: this.commonService.headers,
+      withCredentials: true
+    });
+  }
+
+  /**
+   * Obtiene logs por rango de fechas.
+   */
+  getLogsByFecha(desde: string, hasta: string): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(
+      `${URL_API}/${ENDPOINT}.php?desde=${desde}&hasta=${hasta}`,
+      {
+        headers: this.commonService.headers,
+        withCredentials: true
+      }
+    );
   }
 }

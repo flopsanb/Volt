@@ -6,10 +6,10 @@ import { CookieService } from 'ngx-cookie-service';
   providedIn: 'root'
 })
 export class CommonService {
-  headers: HttpHeaders;
+  constructor(private cookieService: CookieService) {}
 
-  constructor(private cookieService: CookieService) {
-    this.headers = new HttpHeaders({
+  get headers(): HttpHeaders {
+    return new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${localStorage.getItem('token')}`
     });
@@ -55,13 +55,6 @@ export class CommonService {
       CommonService.fill(r, (q + 1) / e),
       CommonService.fill(d - r, q / e)
     );
-  }
-
-  getHeaders(): HttpHeaders {
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`
-    });
   }
 
   base64toPDF(data: string, id: string): void {

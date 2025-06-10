@@ -16,29 +16,31 @@ const ENDPOINT = 'estado_conexion';
 
 export class EstadoConexionService {
 
-  constructor(private http: HttpClient, private common: CommonService) {}
+  constructor(
+    private http: HttpClient,
+    private commonService: CommonService
+  ) {}
 
   /**
-   * Registra actividad del usuario para mantener su estado como conectado.
+   * Registra actividad para marcar al usuario como conectado.
    * @param id_usuario ID del usuario activo
-   * @returns Observable con la respuesta del servidor
    */
   registrarActividad(id_usuario: number): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(
       `${URL_API}/${ENDPOINT}.php?action=registrar`,
       { id_usuario },
-      { headers: this.common.headers }
+      { headers: this.commonService.headers }
     );
   }
 
   /**
    * Obtiene la lista de usuarios actualmente conectados.
-   * @returns Observable con el listado de usuarios conectados
    */
   getConectados(): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(
       `${URL_API}/${ENDPOINT}.php?action=conectados`,
-      { headers: this.common.headers }
+      { headers: this.commonService.headers }
     );
   }
 }
+

@@ -1,12 +1,10 @@
-// Servicio encargado de gestionar las operaciones relacionadas con usuarios
-// incluyendo obtención, creación, actualización y eliminación mediante peticiones HTTP.
-
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { URL_API } from 'src/environments/environments';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../auth/interfaces/api-response';
 import { Usuario } from '../enterprises/interfaces/usuario';
+import { CommonService } from './common.service'; // Asegúrate de importar esto
 
 const ENDPOINT = 'usuario';
 
@@ -15,51 +13,48 @@ const ENDPOINT = 'usuario';
 })
 export class UsuarioService {
 
-  usuarios!: Usuario[]; // Lista de usuarios cargada desde el backend
+  usuarios!: Usuario[];
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private commonService: CommonService
+  ) {}
 
-  // Devuelve los encabezados HTTP necesarios para incluir el token de autenticación
-  private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token || ''}`
-    });
-  }
-
-  // Obtiene todos los usuarios (solo accesible para administradores)
   getAllUsuarios(): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, {
-      headers: this.getAuthHeaders()
+      headers: this.commonService.headers,
+      withCredentials: true
     });
   }
 
-  // Obtiene los usuarios filtrados por empresa
   getUsuariosByEmpresa(id_empresa: number): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(
       `${URL_API}/${ENDPOINT}.php?id_empresa=${id_empresa}`,
-      { headers: this.getAuthHeaders() }
+      {
+        headers: this.commonService.headers,
+        withCredentials: true
+      }
     );
   }
 
-  // Crea un nuevo usuario
   addUsuario(data: Usuario): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, data, {
-      headers: this.getAuthHeaders()
+      headers: this.commonService.headers,
+      withCredentials: true
     });
   }
 
-  // Actualiza un usuario existente
   updateUsuario(data: Usuario): Observable<ApiResponse> {
     return this.http.put<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, data, {
-      headers: this.getAuthHeaders()
+      headers: this.commonService.headers,
+      withCredentials: true
     });
   }
 
-  // Elimina un usuario por su ID
   deleteUsuario(id_usuario: number): Observable<ApiResponse> {
     return this.http.delete<ApiResponse>(`${URL_API}/${ENDPOINT}.php?id=${id_usuario}`, {
-      headers: this.getAuthHeaders()
+      headers: this.commonService.headers,
+      withCredentials: true
     });
   }
 }

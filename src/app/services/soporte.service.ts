@@ -15,7 +15,7 @@ export class SoporteService {
 
   constructor(
     private http: HttpClient,
-    private commonService: CommonService // Proporciona los headers con token de autenticación
+    private commonService: CommonService
   ) {}
 
   /**
@@ -24,22 +24,16 @@ export class SoporteService {
    * @returns Observable con la respuesta del servidor.
    */
   enviarTicket(data: { asunto: string, mensaje: string, email: string }): Observable<ApiResponse> {
-    const body = JSON.stringify(data);
-
-    return this.http.post<ApiResponse>(`${URL_API}/soporte.php`, body, {
-      headers: this.commonService.headers
+    return this.http.post<ApiResponse>(`${URL_API}/soporte.php`, data, {
+      headers: this.commonService.headers,
+      withCredentials: true
     }).pipe(
-      map(res => {
-        return res; // Devuelve la respuesta tal cual
-      }),
-      catchError(error => {
-        // Maneja errores devolviendo una respuesta estándar
-        return of({
-          ok: false,
-          message: 'Error al enviar el ticket de soporte',
-          data: null
-        } as ApiResponse);
-      })
+      map(res => res),
+      catchError(() => of({
+        ok: false,
+        message: 'Error al enviar el ticket de soporte',
+        data: null
+      } as ApiResponse))
     );
   }
 }
