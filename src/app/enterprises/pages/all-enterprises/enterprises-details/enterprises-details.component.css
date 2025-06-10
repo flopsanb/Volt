@@ -1,24 +1,102 @@
-.mat-dialog-content {
-    overflow: hidden;
-    width: 18em;
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: auto;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
 }
 
-.container {
-    margin: 0 auto;
-    width: 18em;
-    text-align: center;
-    padding-top: 10px;
+/* Títulos */
+h2, h3 {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #333;
 }
 
-div.mat-dialog-actions {
-    width: 12em;
-    margin: auto;
+/* Campos de formulario */
+mat-form-field {
+  width: 100%;
+  margin-bottom: 1rem;
 }
 
-div#contain {
-    text-align: justify;
+/* Logo centrado */
+.logo-preview {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
 }
 
-.form.habilitado {
-    text-align: left !important;
+.logo-preview img {
+  max-width: 180px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  padding: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Botón editar */
+button[mat-stroked-button] {
+  margin-bottom: 1.5rem;
+}
+
+/* Filtros y botón de añadir */
+mat-form-field + button {
+  margin-left: 1rem;
+}
+
+/* Iconos de acciones */
+button.mat-icon-button mat-icon {
+  font-size: 18px;
+}
+
+button.mat-icon-button:hover mat-icon {
+  color: #fbc02d;
+}
+
+/* Botones finales (guardar/cancelar) */
+.mt-4 {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.mt-4 {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* Botón GUARDAR en amarillo VoltFencer */
+button.confirmar {
+  background-color: #fbc02d;
+  color: #000;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+button.confirmar:hover {
+  background-color: #fdd835;
+}
+
+/* Botón CANCELAR en gris claro */
+button.cancelar {
+  background-color: #e0e0e0;
+  color: #333;
+  font-weight: 500;
+}
+
+button.cancelar:hover {
+  background-color: #d5d5d5;
 }

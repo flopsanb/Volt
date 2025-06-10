@@ -1,5 +1,6 @@
-.custom-dialog {
-  background-color: #f3f3f3; // Más claro, pero no blanco feo
+// Aplica al contenedor general del dialog
+::ng-deep .custom-dialog-panel .mat-dialog-container {
+  background-color: #f3f3f3;
   border-radius: 20px;
   padding: 30px 25px;
   max-width: 420px;
@@ -8,9 +9,9 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  position: relative;
 }
 
+// Otros estilos siguen igual
 .dialog-title {
   font-size: 20px;
   font-weight: 600;
@@ -46,5 +47,3 @@ button.mat-stroked-button {
   font-weight: bold;
   min-width: 100px;
 }
-
-

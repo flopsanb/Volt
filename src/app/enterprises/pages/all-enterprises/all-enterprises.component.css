@@ -1,67 +1,77 @@
-.mat-column-fk_entidad {
-    width: 15% !important;
-    padding-right: 2em !important;
-    word-wrap: break-word!important;
+.example-container {
+  margin: 2rem auto;
+  max-width: 1200px;
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
-.mat-column-fk_ciclo {
-    width: 20% !important;
-    padding-right: 1em !important;
-    word-wrap: break-word!important;
+.example-table-container {
+  overflow-x: auto;
 }
 
-.mat-column-unidad {
-    width: 6% !important;
-    padding-right: 4em !important;
-    word-wrap: break-word!important;
+/* TABLA */
+table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.mat-column-plazas {
-    width: 6% !important;
-    padding-right: 4em !important;
-    word-wrap: break-word!important;
+/* CABECERA */
+.mat-header-row {
+  background-color: #eeeeee;
+  font-weight: 600;
 }
 
-.mat-column-fk_unidad_dual {
-    width: 8% !important;
-    padding-right: 3em !important;
-    word-wrap: break-word!important;
+th.mat-header-cell {
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.95rem;
 }
 
-.mat-column-fk_motivo_nodual {
-    width: 12% !important;
-    padding-right: 3em !important;
-    word-wrap: break-word!important;
+td.mat-cell {
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  vertical-align: middle;
 }
 
-.mat-column-fk_zona {
-    width: 9% !important;
-    padding-right: 3em !important;
-    word-wrap: break-word!important;
+input[matInput] {
+  width: 100%;
+  font-size: 0.9rem;
 }
 
-.mat-column-fk_provincia {
-    width: 9% !important;
-    padding-right: 3em !important;
-    word-wrap: break-word!important;
+/* LOGO */
+img {
+  max-width: 50px;
+  max-height: 50px;
+  object-fit: contain;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  padding: 0.25rem;
 }
 
-.mat-column-fk_tipo_entidad {
-    width: 9% !important;
-    padding-right: 3em !important;
-    word-wrap: break-word!important;
+/* ACCIONES */
+button.mat-icon-button {
+  margin: 0 4px;
 }
 
-.mat-column-actions {
-    width: 4em !important;
-    padding-right: 0em !important;
-    word-wrap: break-word!important;
+button.mat-icon-button mat-icon {
+  font-size: 20px;
+  color: #333;
 }
 
-.selected .mat-cell.blanco {
-    color: rgb(255, 255, 255) !important;
+button.mat-icon-button:hover mat-icon {
+  color: #fbc02d;
 }
 
-.selected .mat-cell {
-    background-color: #726dfeaf;
+/* FILA SELECCIONADA */
+tr.selected {
+  background-color: #fff8e1;
+}
+
+/* PAGINADOR */
+.mat-paginator {
+  margin-top: 1rem;
+  font-size: 0.9rem;
 }

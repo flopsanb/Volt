@@ -63,6 +63,7 @@ export class LoginPageComponent implements OnInit {
             data: { username },
             disableClose: true,
             autoFocus: true,
+            panelClass: 'custom-dialog-panel'
           });
 
           dialogRef.afterClosed().subscribe(result => {
