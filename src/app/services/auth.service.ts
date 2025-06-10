@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { map, Observable, of, catchError } from 'rxjs';
 import { URL_API } from 'src/environments/environments';
@@ -27,8 +27,13 @@ export class AuthService {
 
   /** ========= LOGIN ========= */
 
-  doLogin(data: any): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${URL_API}/login.php`, JSON.stringify(data));
+  doLogin(data: any) {
+    const body = JSON.stringify(data);
+    return this.http.post<ApiResponse>(`${URL_API}/login.php`, body, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    });
   }
 
   /** ========= LOGOUT ========= */
