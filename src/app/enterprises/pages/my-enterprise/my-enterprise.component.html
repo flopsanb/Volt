@@ -1,125 +1,53 @@
-<div class="my-enterprise-container">
+<!-- ENCABEZADO DE LA EMPRESA -->
+<div class="empresa-header" *ngIf="tienePermisos('ver_mi_empresa')">
+  <img *ngIf="empresa.logo_url" [src]="empresa.logo_url" alt="Logo de empresa" class="empresa-logo" />
 
-  <!-- ENCABEZADO DE LA EMPRESA -->
-  <div class="empresa-header">
-    <!-- Logo de la empresa (solo si tiene URL válida) -->
-    <img *ngIf="empresa.logo_url" [src]="empresa.logo_url" alt="Logo de empresa" class="empresa-logo" />
+  <div class="empresa-info">
+    <h1>
+      <span *ngIf="!editMode">{{ empresa.nombre_empresa }}</span>
 
-    <!-- Info editable de la empresa -->
-    <div class="empresa-info">
-      <h1>
-        <!-- Modo vista del nombre -->
-        <span *ngIf="!editMode">{{ empresa.nombre_empresa }}</span>
-
-        <!-- Input para nombre de empresa (modo edición) -->
-        <mat-form-field *ngIf="editMode" appearance="outline">
+      <ng-container *ngIf="editMode && tienePermisos('gestionar_mi_empresa')">
+        <mat-form-field appearance="outline">
           <mat-label>Nombre de la empresa</mat-label>
           <input matInput [(ngModel)]="empresa.nombre_empresa" />
         </mat-form-field>
 
-        <!-- Input para URL del logo (modo edición) -->
-        <mat-form-field *ngIf="editMode" appearance="outline">
+        <mat-form-field appearance="outline">
           <mat-label>URL del logo</mat-label>
           <input matInput [(ngModel)]="empresa.logo_url" placeholder="https://..." />
         </mat-form-field>
-      </h1>
+      </ng-container>
+    </h1>
 
-      <!-- Botones para editar o guardar -->
-      <div class="empresa-actions">
-        <!-- Botón de editar (no disponible para empleados) -->
-        <button *ngIf="tienePermisos('gestionar_mi_empresa')" mat-icon-button color="primary" (click)="toggleEdit()">
-          <mat-icon>{{ editMode ? 'close' : 'edit' }}</mat-icon>
-        </button>
+    <div class="empresa-actions">
+      <button *ngIf="tienePermisos('gestionar_mi_empresa')" mat-icon-button color="primary" (click)="toggleEdit()">
+        <mat-icon>{{ editMode ? 'close' : 'edit' }}</mat-icon>
+      </button>
 
-        <!-- Botón para guardar cambios -->
-        <button *ngIf="editMode" mat-raised-button color="accent" (click)="guardarCambios()">
-          Guardar
-        </button>
-      </div>
+      <button *ngIf="editMode && tienePermisos('gestionar_mi_empresa')" mat-raised-button color="accent" (click)="guardarCambios()">
+        Guardar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SECCIÓN DE USUARIOS -->
+<div class="usuarios-section" *ngIf="tienePermisos('ver_mi_empresa')">
+  <div class="usuarios-header">
+    <h2>Usuarios de la empresa</h2>
+
+    <div class="usuarios-actions">
+      <button mat-raised-button color="primary" (click)="addUsuario()" *ngIf="tienePermisos('gestionar_mi_empresa')">
+        Añadir usuario
+      </button>
     </div>
   </div>
 
-  <!-- SECCIÓN DE USUARIOS -->
-  <div class="usuarios-section">
-    <div class="usuarios-header">
-      <h2>Usuarios de la empresa</h2>
+  <!-- TABLA -->
+  <table mat-table [dataSource]="dataSource" matSort class="tabla-usuarios mat-elevation-z8">
 
-      <!-- Botón para añadir usuarios (oculto para empleados) -->
-      <div class="usuarios-actions">
-        <button mat-raised-button color="primary" (click)="addUsuario()" *ngIf="tienePermisos('gestionar_mi_empresa')">Añadir usuario</button>
-      </div>
-    </div>
-
-    <!-- TABLA DE USUARIOS -->
-    <table mat-table [dataSource]="dataSource" matSort class="tabla-usuarios mat-elevation-z8">
-
-      <!-- COLUMNA: Usuario -->
-      <ng-container matColumnDef="usuario">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          Usuario
-          <mat-form-field appearance="fill">
-            <input matInput [formControl]="usuarioFilter" placeholder="Filtrar" />
-          </mat-form-field>
-        </th>
-        <td mat-cell *matCellDef="let user">{{ user.usuario }}</td>
-      </ng-container>
-
-      <!-- COLUMNA: Nombre público -->
-      <ng-container matColumnDef="nombre_publico">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          Nombre público
-          <mat-form-field appearance="fill">
-            <input matInput [formControl]="nombrePublicoFilter" placeholder="Filtrar" />
-          </mat-form-field>
-        </th>
-        <td mat-cell *matCellDef="let user">{{ user.nombre_publico }}</td>
-      </ng-container>
-
-      <!-- COLUMNA: Observaciones -->
-      <ng-container matColumnDef="observaciones">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          Observaciones
-          <mat-form-field appearance="fill">
-            <input matInput [formControl]="observacionesFilter" placeholder="Filtrar" />
-          </mat-form-field>
-        </th>
-        <td mat-cell *matCellDef="let user">{{ user.observaciones }}</td>
-      </ng-container>
-
-      <!-- COLUMNA: Habilitado (1=Sí, 0=No) -->
-      <ng-container matColumnDef="habilitado">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          Habilitado
-          <mat-form-field appearance="fill">
-            <mat-select [formControl]="habilitadoFilter" placeholder="Filtrar">
-              <mat-option value="">Todos</mat-option>
-              <mat-option value="1">Sí</mat-option>
-              <mat-option value="0">No</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </th>
-        <td mat-cell *matCellDef="let user">{{ user.habilitado === 1 ? 'Sí' : 'No' }}</td>
-      </ng-container>
-
-      <!-- COLUMNA: Conectado (online/offline) -->
-      <ng-container matColumnDef="conectado">
-        <th mat-header-cell *matHeaderCellDef>
-          Conectado
-          <mat-form-field appearance="fill">
-            <mat-select [formControl]="conectadoFilter" placeholder="Filtrar">
-              <mat-option value="">Todos</mat-option>
-              <mat-option value="1">Sí</mat-option>
-              <mat-option value="0">No</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </th>
-        <td mat-cell *matCellDef="let user">
-          <span *ngIf="usuariosConectados.includes(user.id_usuario ?? -1)">✅</span>
-          <span *ngIf="!usuariosConectados.includes(user.id_usuario ?? -1)">❌</span>
-        </td>
-      </ng-container>
-
-      <!-- COLUMNA: Acciones (editar/borrar) -->
+    <!-- ACCIONES: SOLO SI TIENE PERMISO -->
+    <ng-container *ngIf="tienePermisos('gestionar_mi_empresa')">
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef>Acciones</th>
         <td mat-cell *matCellDef="let user">
@@ -131,13 +59,11 @@
           </button>
         </td>
       </ng-container>
+    </ng-container>
 
-      <!-- FILAS DE LA TABLA -->
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let user; columns: displayedColumns;"></tr>
-    </table>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let user; columns: displayedColumns;"></tr>
+  </table>
 
-    <!-- PAGINADOR -->
-    <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
-  </div>
+  <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
 </div>

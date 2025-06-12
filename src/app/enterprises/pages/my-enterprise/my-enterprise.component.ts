@@ -78,9 +78,6 @@ export class MyEnterpriseComponent implements OnInit {
       this.cargarUsuarios(id_empresa);
       this.obtenerConectados();
       this.onFilterChanges();
-      if (this.tienePermisos('gestionar_mi_empresa')) {
-        this.displayedColumns.push('acciones');
-      }
     } else {
       this.snackBar.open('No se encontró el ID de la empresa', 'Cerrar', { duration: 3000 });
     }
@@ -108,6 +105,12 @@ export class MyEnterpriseComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.dataSource.filterPredicate = this.createFilter();
+
+        if (this.tienePermisos('gestionar_mi_empresa')) {
+          if (!this.displayedColumns.includes('acciones')) {
+            this.displayedColumns.push('acciones');
+          }
+        }
       } else {
         this.snackBar.open(res.message ?? 'Error al cargar usuarios', 'Cerrar', { duration: 3000 });
       }
@@ -115,10 +118,13 @@ export class MyEnterpriseComponent implements OnInit {
   }
 
   toggleEdit(): void {
+    if (!this.tienePermisos('gestionar_mi_empresa')) return;
     this.editMode = !this.editMode;
   }
 
   guardarCambios(): void {
+    if (!this.tienePermisos('gestionar_mi_empresa')) return;
+
     if (!this.empresa.nombre_empresa) {
       this.snackBar.open('El nombre no puede estar vacío', 'Cerrar', { duration: 3000 });
       return;
