@@ -1,6 +1,5 @@
 // src/app/enterprises/pages/my-enterprise/my-enterprise.component.ts
 
-// Importaciones necesarias desde Angular y librerías de Material
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -9,28 +8,17 @@ import { FormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 
-// Importación de interfaces necesarias para tipado
 import { Usuario } from 'src/app/enterprises/interfaces/usuario';
 import { Enterprise } from 'src/app/enterprises/interfaces/enterprise.interface';
 
-// Importación de servicios para consumo de API
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { EnterprisesService } from 'src/app/services/enterprises.service';
 import { EstadoConexionService } from 'src/app/services/estado-conexion.service';
 
-// Importación de componentes para diálogos CRUD
 import { AddUsuarioComponent } from './add-usuario/add-usuario.component';
 import { EditUsuarioComponent } from './edit-usuario/edit-usuario.component';
 import { DeleteUsuarioComponent } from './delete-usuario/delete-usuario.component';
 
-/**
- * Componente principal de gestión de Mi empresa.
- * 
- * Se encarga de:
- * - Cargar los datos de la empres y la gestión de usuarios.
- * - Permitir añadir, editar, eliminar o deshabilitar usuarios.
- * - Mostrar la interfaz en función del rol del usuario (admin de empresa o empleado).
- */
 @Component({
   selector: 'app-my-enterprise',
   templateUrl: './my-enterprise.component.html',
@@ -38,11 +26,9 @@ import { DeleteUsuarioComponent } from './delete-usuario/delete-usuario.componen
 })
 export class MyEnterpriseComponent implements OnInit {
 
-  // Referencias a paginador y ordenamiento de la tabla
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  // Datos de la empresa logueada
   empresa: Enterprise = {
     id_empresa: 0,
     nombre_empresa: '',
@@ -51,20 +37,17 @@ export class MyEnterpriseComponent implements OnInit {
     proyectos_totales: 0
   };
 
-  // Fuente de datos y variables relacionadas con los usuarios
   dataSource: MatTableDataSource<Usuario> = new MatTableDataSource();
   usuariosConectados: number[] = [];
   editMode = false;
   displayedColumns: string[] = ['usuario', 'nombre_publico', 'observaciones', 'habilitado', 'conectado'];
 
-  // Filtros por columna
   usuarioFilter = new FormControl('');
   nombrePublicoFilter = new FormControl('');
   observacionesFilter = new FormControl('');
   habilitadoFilter = new FormControl('');
   conectadoFilter = new FormControl('');
 
-  // Valores de los filtros
   private filterValues = {
     usuario: '',
     nombre_publico: '',
@@ -73,8 +56,10 @@ export class MyEnterpriseComponent implements OnInit {
     conectado: ''
   };
 
-  // Rol del usuario actual
-  rol: number = parseInt(localStorage.getItem('id_rol') || '0', 10);
+  id_empresa: string | null = localStorage.getItem('id_empresa');
+  id_rol: string | null = localStorage.getItem('id_rol');
+  esGlobal: boolean = false;
+  rawPermises: { [key: string]: number } = {};
 
   constructor(
     private usuarioService: UsuarioService,
@@ -84,15 +69,16 @@ export class MyEnterpriseComponent implements OnInit {
     private dialog: MatDialog
   ) {}
 
-  // Inicialización del componente: carga datos, filtros y añade columnas si corresponde
   ngOnInit(): void {
-    const id_empresa = parseInt(localStorage.getItem('id_empresa') || '0', 10);
+    const id_empresa = parseInt(this.id_empresa || '0', 10);
+    this.esGlobal = this.id_rol === '1' || this.id_rol === '2';
+
     if (id_empresa) {
       this.cargarEmpresa(id_empresa);
       this.cargarUsuarios(id_empresa);
       this.obtenerConectados();
       this.onFilterChanges();
-      if (this.rol !== 4) {
+      if (this.tienePermisos('gestionar_mi_empresa')) {
         this.displayedColumns.push('acciones');
       }
     } else {
@@ -100,7 +86,10 @@ export class MyEnterpriseComponent implements OnInit {
     }
   }
 
-  // Carga la información de la empresa actual
+  tienePermisos(clave: string): boolean {
+    return this.rawPermises?.[clave] === 1;
+  }
+
   cargarEmpresa(id_empresa: number): void {
     this.enterpriseService.getEmpresaById(id_empresa).subscribe(res => {
       if (res.ok) {
@@ -111,11 +100,11 @@ export class MyEnterpriseComponent implements OnInit {
     });
   }
 
-  // Carga los usuarios pertenecientes a la empresa
   cargarUsuarios(id_empresa: number): void {
     this.usuarioService.getUsuariosByEmpresa(id_empresa).subscribe(res => {
       if (res.ok) {
         this.dataSource.data = res.data;
+        this.rawPermises = res.permises || {};
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.dataSource.filterPredicate = this.createFilter();
@@ -125,12 +114,10 @@ export class MyEnterpriseComponent implements OnInit {
     });
   }
 
-  // Activa/desactiva modo edición para el nombre y logo
   toggleEdit(): void {
     this.editMode = !this.editMode;
   }
 
-  // Guarda los cambios realizados a la empresa
   guardarCambios(): void {
     if (!this.empresa.nombre_empresa) {
       this.snackBar.open('El nombre no puede estar vacío', 'Cerrar', { duration: 3000 });
@@ -147,9 +134,9 @@ export class MyEnterpriseComponent implements OnInit {
     });
   }
 
-  // Abre modal para añadir usuario
   addUsuario(): void {
-    if (this.rol === 4) return;
+    if (!this.tienePermisos('gestionar_mi_empresa')) return;
+
     const dialogRef = this.dialog.open(AddUsuarioComponent, {
       data: { id_empresa: this.empresa.id_empresa }
     });
@@ -159,9 +146,9 @@ export class MyEnterpriseComponent implements OnInit {
     });
   }
 
-  // Abre modal para editar un usuario
   editUsuario(usuario: Usuario): void {
-    if (this.rol === 4) return;
+    if (!this.tienePermisos('gestionar_mi_empresa')) return;
+
     const dialogRef = this.dialog.open(EditUsuarioComponent, {
       data: usuario
     });
@@ -171,9 +158,9 @@ export class MyEnterpriseComponent implements OnInit {
     });
   }
 
-  // Abre modal para eliminar un usuario
   deleteUsuario(usuario: Usuario): void {
-    if (this.rol === 4) return;
+    if (!this.tienePermisos('gestionar_mi_empresa')) return;
+
     const dialogRef = this.dialog.open(DeleteUsuarioComponent, {
       data: usuario
     });
@@ -183,7 +170,6 @@ export class MyEnterpriseComponent implements OnInit {
     });
   }
 
-  // Obtiene lista de usuarios conectados
   obtenerConectados(): void {
     this.estadoConexionService.getConectados().subscribe(res => {
       if (res.ok) {
@@ -192,12 +178,10 @@ export class MyEnterpriseComponent implements OnInit {
     });
   }
 
-  // Verifica si un usuario está en la lista de conectados
   isUsuarioConectado(id: number): boolean {
     return this.usuariosConectados.includes(id);
   }
 
-  // Controla los cambios en los filtros para aplicar a la tabla
   onFilterChanges(): void {
     this.usuarioFilter.valueChanges.subscribe(val => {
       this.filterValues.usuario = val ?? '';
@@ -225,7 +209,6 @@ export class MyEnterpriseComponent implements OnInit {
     });
   }
 
-  // Crea la función personalizada para filtrar los usuarios
   createFilter(): (usuario: Usuario, filter: string) => boolean {
     return (usuario: Usuario, filter: string): boolean => {
       const searchTerms = JSON.parse(filter);
@@ -238,4 +221,5 @@ export class MyEnterpriseComponent implements OnInit {
         && conectado.includes(searchTerms.conectado);
     };
   }
+  
 }

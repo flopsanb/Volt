@@ -8,40 +8,23 @@ import { EditProyectoComponent } from './edit-proyecto/edit-proyecto.component';
 import { DeleteProyectoComponent } from './delete-proyecto/delete-proyecto.component';
 import { AddProyectoComponent } from './add-proyecto/add-proyecto.component';
 
-/**
- * Componente principal de gestión de proyectos.
- * 
- * Se encarga de:
- * - Cargar todos los proyectos y clasificarlos según empresa y permisos.
- * - Permitir añadir, editar, eliminar, deshabilitar u ocultar proyectos.
- * - Mostrar la interfaz en función del rol del usuario (global o empresa).
- */
 @Component({
   selector: 'app-proyectos',
   templateUrl: './proyectos.component.html',
   styleUrls: ['./proyectos.component.scss']
 })
-
 export class ProyectosComponent implements OnInit {
 
-  // Listados de proyectos según origen
   proyectos: Project[] = [];
   proyectosEmpresa: Project[] = [];
   proyectosOtrasEmpresas: Project[] = [];
   proyectosOtrasEmpresasPorEmpresa: { nombre_empresa: string; proyectos: Project[] }[] = [];
 
-  // Datos del usuario logueado
   id_empresa: string | null = localStorage.getItem('id_empresa');
   id_rol: string | null = localStorage.getItem('id_rol');
   esGlobal: boolean = false;
 
-  // Permisos según backend
-  permises: any = {
-    add: false,
-    edit: false,
-    delete: false,
-    ocultar: false
-  };
+  rawPermises: { [key: string]: number } = {};
 
   constructor(
     private projectService: ProjectService,
@@ -50,67 +33,48 @@ export class ProyectosComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {}
 
-  /**
-   * Carga inicial de proyectos y permisos personalizados.
-   * Aplica filtros según el tipo de rol para mostrar datos específicos.
-   */
   ngOnInit(): void {
     this.projectService.getAllProyectos().subscribe((response) => {
       const projects = response.data as Project[];
-      const rawPermises = response.permises;
+      this.rawPermises = response.permises || {};
+      this.esGlobal = this.id_rol === '1' || this.id_rol === '2';
 
-      const id_rol = Number(this.id_rol);
-      const id_empresa = this.id_empresa;
-
-      this.permises = {
-        add: rawPermises?.crear_proyectos === 1,
-        edit: rawPermises?.crear_proyectos === 1 || rawPermises?.gestionar_usuarios_globales === 1,
-        delete: rawPermises?.borrar_proyectos === 1,
-        ocultar: rawPermises?.gestionar_usuarios_empresa === 1 || rawPermises?.gestionar_usuarios_globales === 1,
-        deshabilitar: rawPermises?.deshabilitar_proyectos === 1 || rawPermises?.gestionar_usuarios_globales === 1,
-      };
-
-      this.esGlobal = id_rol === 1 || id_rol === 2;
-
-      // Proyectos visibles para el usuario actual
-      this.proyectosEmpresa = projects.filter(p => {
-        const mismaEmpresa = p.id_empresa.toString() === id_empresa;
-        if (!mismaEmpresa) return false;
-
-        if (this.esGlobal) return true;
-        if (id_rol === 3) return p.habilitado === 1;
-        if (id_rol === 4) return p.habilitado === 1 && p.visible === 1;
-        return false;
-      });
-
-      // Proyectos de otras empresas (solo visibles para roles globales)
-      this.proyectosOtrasEmpresas = this.esGlobal
-        ? projects.filter(p => p.id_empresa.toString() !== id_empresa)
-        : [];
-
-      // Agrupar proyectos de otras empresas por nombre
-      const agrupado: { [key: string]: Project[] } = {};
-      this.proyectosOtrasEmpresas.forEach(p => {
-        const nombre = p.nombre_empresa || `Empresa ${p.id_empresa}`;
-        if (!agrupado[nombre]) agrupado[nombre] = [];
-        agrupado[nombre].push(p);
-      });
-
-      this.proyectosOtrasEmpresasPorEmpresa = Object.entries(agrupado).map(([nombre_empresa, proyectos]) => ({
-        nombre_empresa,
-        proyectos
-      }));
+      this.proyectosEmpresa = projects.filter(p => this.puedeVerProyecto(p));
+      this.proyectosOtrasEmpresas = this.esGlobal ? projects.filter(p => p.id_empresa.toString() !== this.id_empresa) : [];
+      this.proyectosOtrasEmpresasPorEmpresa = this.agruparPorEmpresa(this.proyectosOtrasEmpresas);
     });
   }
 
-  /**
-   * Abre el diálogo para crear un nuevo proyecto.
-   */
-  async addProject() {
-    const dialogRef = this.dialog.open(AddProyectoComponent, {
-      width: '600px'
+  tienePermisos(key: string): boolean {
+    return this.rawPermises?.[key] === 1;
+  }
+
+  puedeVerProyecto(p: Project): boolean {
+    const mismaEmpresa = p.id_empresa.toString() === this.id_empresa;
+    if (!mismaEmpresa) return false;
+
+    if (this.esGlobal) return true;
+    if (this.id_rol === '3') return p.habilitado === 1;
+    if (this.id_rol === '4') return p.habilitado === 1 && p.visible === 1;
+
+    return false;
+  }
+
+  agruparPorEmpresa(proyectos: Project[]): { nombre_empresa: string; proyectos: Project[] }[] {
+    const agrupado: { [key: string]: Project[] } = {};
+    proyectos.forEach(p => {
+      const nombre = p.nombre_empresa || `Empresa ${p.id_empresa}`;
+      if (!agrupado[nombre]) agrupado[nombre] = [];
+      agrupado[nombre].push(p);
     });
 
+    return Object.entries(agrupado).map(([nombre_empresa, proyectos]) => ({ nombre_empresa, proyectos }));
+  }
+
+  async addProject() {
+    if (!this.tienePermisos('crear_proyectos')) return;
+
+    const dialogRef = this.dialog.open(AddProyectoComponent, { width: '600px' });
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.ok) {
         this.showSnackbar('Proyecto creado con éxito');
@@ -119,11 +83,9 @@ export class ProyectosComponent implements OnInit {
     });
   }
 
-  /**
-   * Abre el diálogo para editar un proyecto existente.
-   * @param proyecto Proyecto a editar
-   */
   async editProject(proyecto: Project) {
+    if (!this.tienePermisos('gestionar_proyectos')) return;
+
     const dialogRef = this.dialog.open(EditProyectoComponent, {
       width: '600px',
       autoFocus: false,
@@ -139,11 +101,9 @@ export class ProyectosComponent implements OnInit {
     });
   }
 
-  /**
-   * Abre el diálogo de confirmación para eliminar un proyecto.
-   * @param proyecto Proyecto a eliminar
-   */
   async deleteProject(proyecto: Project) {
+    if (!this.tienePermisos('borrar_proyectos')) return;
+
     const dialogRef = this.dialog.open(DeleteProyectoComponent, {
       panelClass: 'custom-dialog-container',
       data: proyecto
@@ -151,45 +111,26 @@ export class ProyectosComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.ok) {
-        this.proyectos = this.proyectos.filter(p => p.id_proyecto !== proyecto.id_proyecto);
+        this.proyectosEmpresa = this.proyectosEmpresa.filter(p => p.id_proyecto !== proyecto.id_proyecto);
         this.showSnackbar('Proyecto eliminado correctamente');
       }
     });
   }
 
-  /**
-   * Muestra un mensaje temporal en pantalla.
-   * @param message Texto a mostrar
-   */
+  ocultarODeshabilitar(proyecto: Project, campo: 'visible' | 'habilitado', mensaje: string, permiso: string) {
+    if (!this.tienePermisos(permiso)) return;
+
+    proyecto[campo] = proyecto[campo] === 1 ? 0 : 1;
+    this.projectService.editProyecto(proyecto).subscribe(() => {
+      this.showSnackbar(mensaje);
+    });
+  }
+
   showSnackbar(message: string): void {
     this.snackBar.open(message, 'Cerrar', {
       duration: 3000,
       horizontalPosition: 'center',
       verticalPosition: 'bottom',
-    });
-  }
-
-  /**
-   * Cambia la visibilidad de un proyecto (ocultar/mostrar).
-   * @param proyecto Proyecto a modificar
-   */
-  toggleVisibility(proyecto: Project) {
-    if (!this.permises.ocultar) return;
-    proyecto.visible = proyecto.visible === 1 ? 0 : 1;
-    this.projectService.editProyecto(proyecto).subscribe(() => {
-      this.showSnackbar('Visibilidad cambiada');
-    });
-  }
-
-  /**
-   * Cambia el estado de habilitación del proyecto.
-   * @param proyecto Proyecto a modificar
-   */
-  toggleEnabled(proyecto: Project) {
-    if (!this.permises.deshabilitar) return;
-    proyecto.habilitado = proyecto.habilitado === 1 ? 0 : 1;
-    this.projectService.editProyecto(proyecto).subscribe(() => {
-      this.showSnackbar('Estado de habilitación cambiado');
     });
   }
 }

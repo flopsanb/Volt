@@ -27,7 +27,7 @@
       <!-- Botones para editar o guardar -->
       <div class="empresa-actions">
         <!-- Botón de editar (no disponible para empleados) -->
-        <button *ngIf="rol !== 4" mat-icon-button color="primary" (click)="toggleEdit()">
+        <button *ngIf="tienePermisos('gestionar_mi_empresa')" mat-icon-button color="primary" (click)="toggleEdit()">
           <mat-icon>{{ editMode ? 'close' : 'edit' }}</mat-icon>
         </button>
 
@@ -46,7 +46,7 @@
 
       <!-- Botón para añadir usuarios (oculto para empleados) -->
       <div class="usuarios-actions">
-        <button mat-raised-button color="primary" (click)="addUsuario()" *ngIf="rol !== 4">Añadir usuario</button>
+        <button mat-raised-button color="primary" (click)="addUsuario()" *ngIf="tienePermisos('gestionar_mi_empresa')">Añadir usuario</button>
       </div>
     </div>
 
