@@ -35,6 +35,7 @@ export class ProyectosComponent implements OnInit {
 
   ngOnInit(): void {
     this.projectService.getAllProyectos().subscribe((response) => {
+      console.log('🔓 Permisos recibidos del backend:', response.permises);
       const projects = response.data as Project[];
       this.rawPermises = response.permises || {};
       this.esGlobal = this.id_rol === '1' || this.id_rol === '2';
