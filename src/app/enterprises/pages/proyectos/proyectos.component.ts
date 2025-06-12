@@ -35,7 +35,6 @@ export class ProyectosComponent implements OnInit {
 
   ngOnInit(): void {
     this.projectService.getAllProyectos().subscribe((response) => {
-      console.log('🔓 Permisos recibidos del backend:', response.permises);
       const projects = response.data as Project[];
       this.rawPermises = response.permises || {};
       this.esGlobal = this.id_rol === '1' || this.id_rol === '2';
@@ -73,29 +72,23 @@ export class ProyectosComponent implements OnInit {
   }
 
   async addProject() {
-    console.log('🆕 Intentando abrir modal de añadir proyecto');
     if (!this.tienePermisos('crear_proyectos')) {
-      console.warn('🚫 No tienes permisos para crear proyectos');
       return;
     }
 
     const dialogRef = this.dialog.open(AddProyectoComponent, { width: '600px' });
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('📥 Modal de añadir cerrado con:', result);
       if (result?.ok) {
-        console.log('✅ Proyecto creado correctamente, recargando lista');
+
         this.showSnackbar('Proyecto creado con éxito');
         this.ngOnInit();
       } else {
-        console.log('❌ Proyecto no creado o cancelado');
       }
     });
   }
 
   async editProject(proyecto: Project) {
-    console.log('✏️ Editar proyecto llamado:', proyecto);
     if (!this.tienePermisos('gestionar_proyectos')) {
-      console.warn('🚫 Sin permisos para editar');
       return;
     }
 
@@ -107,7 +100,6 @@ export class ProyectosComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('📥 Diálogo cerrado con resultado:', result);
       if (result?.ok) {
         this.showSnackbar('Proyecto actualizado');
         this.ngOnInit();
@@ -117,9 +109,7 @@ export class ProyectosComponent implements OnInit {
 
 
   async deleteProject(proyecto: Project) {
-    console.log('🗑️ Eliminar proyecto llamado:', proyecto);
     if (!this.tienePermisos('borrar_proyectos')) {
-      console.warn('🚫 Sin permisos para borrar');
       return;
     }
 
@@ -129,14 +119,11 @@ export class ProyectosComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('📥 Diálogo de borrado cerrado con:', result);
       if (result?.ok) {
-        console.log('✅ Proyecto eliminado, actualizando lista');
         this.proyectosEmpresa = this.proyectosEmpresa.filter(p => p.id_proyecto !== proyecto.id_proyecto);
         this.showSnackbar('Proyecto eliminado correctamente');
         this.ngOnInit();
       } else {
-        console.log('❌ Proyecto no eliminado o cancelado');
       }
     });
   }
@@ -147,22 +134,17 @@ export class ProyectosComponent implements OnInit {
    * @param proyecto Proyecto a modificar
    */
   toggleVisibility(proyecto: Project) {
-    console.log('👁️ Toggle Visibilidad llamado:', proyecto);
     if (!this.tienePermisos('ocultar_proyectos')) {
-      console.warn('🚫 Sin permisos para ocultar proyectos');
       return;
     }
 
     proyecto.visible = proyecto.visible === 1 ? 0 : 1;
-    console.log(`↔️ Cambiando visibilidad a: ${proyecto.visible}`);
 
     this.projectService.editProyecto(proyecto).subscribe({
       next: () => {
-        console.log('✅ Visibilidad cambiada exitosamente');
         this.showSnackbar('Visibilidad cambiada');
       },
-      error: (err) => {
-        console.error('❌ Error al cambiar visibilidad:', err);
+      error: () => {
         this.showSnackbar('Error al cambiar visibilidad');
       }
     });
@@ -173,22 +155,17 @@ export class ProyectosComponent implements OnInit {
    * @param proyecto Proyecto a modificar
    */
   toggleEnabled(proyecto: Project) {
-    console.log('🔌 Toggle Habilitado llamado:', proyecto);
     if (!this.tienePermisos('deshabilitar_proyectos')) {
-      console.warn('🚫 Sin permisos para deshabilitar proyectos');
       return;
     }
 
     proyecto.habilitado = proyecto.habilitado === 1 ? 0 : 1;
-    console.log(`↔️ Cambiando habilitado a: ${proyecto.habilitado}`);
 
     this.projectService.editProyecto(proyecto).subscribe({
       next: () => {
-        console.log('✅ Estado de habilitación cambiado exitosamente');
         this.showSnackbar('Estado de habilitación cambiado');
       },
-      error: (err) => {
-        console.error('❌ Error al cambiar habilitación:', err);
+      error: () => {
         this.showSnackbar('Error al cambiar habilitación');
       }
     });

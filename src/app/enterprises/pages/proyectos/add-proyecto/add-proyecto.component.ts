@@ -49,6 +49,10 @@ export class AddProyectoComponent implements OnInit {
    * Guarda el nuevo proyecto enviando los datos al backend.
    */
   saveChanges(): void {
+    // Convierte bool a number para evitar fallos en php
+    this.proyecto.visible = this.proyecto.visible ? 1 : 0;
+    this.proyecto.habilitado = this.proyecto.habilitado ? 1 : 0;
+
     this.projectService.addProyecto(this.proyecto).subscribe({
       next: (res) => {
         this.snackBar.open('Proyecto creado correctamente.', 'Cerrar', { duration: 3000 });

@@ -1,11 +1,8 @@
-import { HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { CookieService } from 'ngx-cookie-service';
 import { AuthService } from '../../../services/auth.service';
-import { CommonService } from '../../../services/common.service';
 import { MatDialog } from '@angular/material/dialog';
 import { RegisterDialogComponent } from '../../components/register-dialog/register-dialog.component';
 import { ViewEncapsulation } from '@angular/core';
@@ -32,7 +29,6 @@ export class LoginPageComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private snackBar: MatSnackBar,
-    private commonService: CommonService,
     private dialog: MatDialog
   ){}
 
@@ -56,7 +52,7 @@ export class LoginPageComponent implements OnInit {
 
       try {
         const userExists = await this.authService.checkUser(username).toPromise();
-        console.log('[✅ LOGIN] Respuesta del backend (checkUser):', userExists);
+
         if (userExists) {
           const dialogRef = this.dialog.open(RegisterDialogComponent, {
             width: '400px',
@@ -67,20 +63,17 @@ export class LoginPageComponent implements OnInit {
           });
 
           dialogRef.afterClosed().subscribe(result => {
-            console.log('[📦 LOGIN] 1Resultado del modal RegisterDialog:', result); 
             if (result) {
               this.doLogin(username, result);
             }
           });
 
         } else {
-          console.warn('[⚠️ LOGIN] Usuario no encontrado');
           this.error = 'El usuario no está registrado';
           this.snackBar.open('No hay ningún usuario con ese nombre', 'Cerrar', { duration: 5000 });
         }
 
       } catch (error) {
-        console.error('[❌ LOGIN] Error al conectar con el servidor:', error);
         this.snackBar.open('Error al conectar con el servidor', 'Cerrar', { duration: 5000 });
       }
     }

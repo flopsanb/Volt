@@ -221,5 +221,4 @@ export class MyEnterpriseComponent implements OnInit {
         && conectado.includes(searchTerms.conectado);
     };
   }
-  
 }
