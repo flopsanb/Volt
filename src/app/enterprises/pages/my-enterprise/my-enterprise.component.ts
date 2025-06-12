@@ -60,6 +60,7 @@ export class MyEnterpriseComponent implements OnInit {
   id_rol: string | null = localStorage.getItem('id_rol');
   esGlobal: boolean = false;
   rawPermises: { [key: string]: number } = {};
+  tablaLista = false;
 
   constructor(
     private usuarioService: UsuarioService,
@@ -110,6 +111,7 @@ export class MyEnterpriseComponent implements OnInit {
         if (this.tienePermisos('gestionar_mi_empresa')) {
           this.displayedColumns.push('acciones');
         }
+        this.tablaLista = true;
 
       } else {
         this.snackBar.open(res.message ?? 'Error al cargar usuarios', 'Cerrar', { duration: 3000 });

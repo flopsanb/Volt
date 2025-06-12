@@ -45,28 +45,30 @@
   </div>
 
   <!-- TABLA -->
-  <table mat-table [dataSource]="dataSource" matSort class="tabla-usuarios mat-elevation-z8">
+  <div *ngIf="tablaLista">
+    <table mat-table [dataSource]="dataSource" matSort class="tabla-usuarios mat-elevation-z8">
 
-    <!-- COLUMNA DE ACCIONES (renderizada siempre, pero vacía si no hay permisos) -->
-    <ng-container matColumnDef="acciones">
-      <th mat-header-cell *matHeaderCellDef>
-        <ng-container *ngIf="tienePermisos('gestionar_mi_empresa')">Acciones</ng-container>
-      </th>
-      <td mat-cell *matCellDef="let user">
-        <ng-container *ngIf="tienePermisos('gestionar_mi_empresa')">
-          <button mat-icon-button (click)="editUsuario(user)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn" (click)="deleteUsuario(user)">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </ng-container>
-      </td>
-    </ng-container>
+      <!-- COLUMNA DE ACCIONES (renderizada siempre, pero vacía si no hay permisos) -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>
+          <ng-container *ngIf="tienePermisos('gestionar_mi_empresa')">Acciones</ng-container>
+        </th>
+        <td mat-cell *matCellDef="let user">
+          <ng-container *ngIf="tienePermisos('gestionar_mi_empresa')">
+            <button mat-icon-button (click)="editUsuario(user)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteUsuario(user)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let user; columns: displayedColumns;"></tr>
-  </table>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let user; columns: displayedColumns;"></tr>
+    </table>
 
-  <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+  </div>
 </div>
