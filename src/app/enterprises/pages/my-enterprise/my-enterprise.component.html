@@ -6,7 +6,6 @@
     <h1>
       <span *ngIf="!editMode">{{ empresa.nombre_empresa }}</span>
 
-      <!-- Solo puede editar nombre y logo si tiene permisos -->
       <ng-container *ngIf="editMode && tienePermisos('gestionar_mi_empresa')">
         <mat-form-field appearance="outline">
           <mat-label>Nombre de la empresa</mat-label>
@@ -45,30 +44,60 @@
   </div>
 
   <!-- TABLA -->
-  <div *ngIf="tablaLista">
-    <table mat-table [dataSource]="dataSource" matSort class="tabla-usuarios mat-elevation-z8">
+  <table *ngIf="tablaLista" mat-table [dataSource]="dataSource" matSort class="tabla-usuarios mat-elevation-z8">
 
-      <!-- COLUMNA DE ACCIONES (renderizada siempre, pero vacía si no hay permisos) -->
-      <ng-container matColumnDef="acciones">
-        <th mat-header-cell *matHeaderCellDef>
-          <ng-container *ngIf="tienePermisos('gestionar_mi_empresa')">Acciones</ng-container>
-        </th>
-        <td mat-cell *matCellDef="let user">
-          <ng-container *ngIf="tienePermisos('gestionar_mi_empresa')">
-            <button mat-icon-button (click)="editUsuario(user)">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="deleteUsuario(user)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </ng-container>
-        </td>
-      </ng-container>
+    <!-- COLUMNA USUARIO -->
+    <ng-container matColumnDef="usuario">
+      <th mat-header-cell *matHeaderCellDef>Usuario</th>
+      <td mat-cell *matCellDef="let user">{{ user.usuario }}</td>
+    </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let user; columns: displayedColumns;"></tr>
-    </table>
+    <!-- COLUMNA NOMBRE PUBLICO -->
+    <ng-container matColumnDef="nombre_publico">
+      <th mat-header-cell *matHeaderCellDef>Nombre público</th>
+      <td mat-cell *matCellDef="let user">{{ user.nombre_publico }}</td>
+    </ng-container>
 
-    <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
-  </div>
+    <!-- COLUMNA OBSERVACIONES -->
+    <ng-container matColumnDef="observaciones">
+      <th mat-header-cell *matHeaderCellDef>Observaciones</th>
+      <td mat-cell *matCellDef="let user">{{ user.observaciones }}</td>
+    </ng-container>
+
+    <!-- COLUMNA HABILITADO -->
+    <ng-container matColumnDef="habilitado">
+      <th mat-header-cell *matHeaderCellDef>Habilitado</th>
+      <td mat-cell *matCellDef="let user">{{ user.habilitado ? 'Sí' : 'No' }}</td>
+    </ng-container>
+
+    <!-- COLUMNA CONECTADO -->
+    <ng-container matColumnDef="conectado">
+      <th mat-header-cell *matHeaderCellDef>Conectado</th>
+      <td mat-cell *matCellDef="let user">{{ isUsuarioConectado(user.id_usuario) ? 'Sí' : 'No' }}</td>
+    </ng-container>
+
+    <!-- COLUMNA ACCIONES (siempre definida) -->
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef>
+        <ng-container *ngIf="tienePermisos('gestionar_mi_empresa')">Acciones</ng-container>
+      </th>
+      <td mat-cell *matCellDef="let user">
+        <ng-container *ngIf="tienePermisos('gestionar_mi_empresa')">
+          <button mat-icon-button (click)="editUsuario(user)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteUsuario(user)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </ng-container>
+      </td>
+    </ng-container>
+
+    <!-- FILAS -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let user; columns: displayedColumns;"></tr>
+  </table>
+
+  <!-- PAGINADOR -->
+  <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
 </div>
