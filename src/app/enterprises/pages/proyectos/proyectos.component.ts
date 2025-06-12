@@ -117,12 +117,27 @@ export class ProyectosComponent implements OnInit {
     });
   }
 
-  ocultarODeshabilitar(proyecto: Project, campo: 'visible' | 'habilitado', mensaje: string, permiso: string) {
-    if (!this.tienePermisos(permiso)) return;
-
-    proyecto[campo] = proyecto[campo] === 1 ? 0 : 1;
+  /**
+   * Cambia la visibilidad de un proyecto (ocultar/mostrar).
+   * @param proyecto Proyecto a modificar
+   */
+  toggleVisibility(proyecto: Project) {
+    if (!this.tienePermisos('ocultar_proyectos')) return;
+    proyecto.visible = proyecto.visible === 1 ? 0 : 1;
     this.projectService.editProyecto(proyecto).subscribe(() => {
-      this.showSnackbar(mensaje);
+      this.showSnackbar('Visibilidad cambiada');
+    });
+  }
+
+  /**
+   * Cambia el estado de habilitación del proyecto.
+   * @param proyecto Proyecto a modificar
+   */
+  toggleEnabled(proyecto: Project) {
+    if (!this.tienePermisos('deshabilitar_proyectos')) return;
+    proyecto.habilitado = proyecto.habilitado === 1 ? 0 : 1;
+    this.projectService.editProyecto(proyecto).subscribe(() => {
+      this.showSnackbar('Estado de habilitación cambiado');
     });
   }
 

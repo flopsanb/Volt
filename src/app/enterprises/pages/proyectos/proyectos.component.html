@@ -20,8 +20,8 @@
       [canToggleEnabled]="tienePermisos('deshabilitar_proyectos') || tienePermisos('gestionar_usuarios_globales')"
       (edit)="editProject(proyecto)"
       (delete)="deleteProject(proyecto)"
-      (toggleVisibility)="ocultarODeshabilitar(proyecto, 'visible', 'Visibilidad cambiada', 'ocultar_proyectos')"
-      (toggleEnabled)="ocultarODeshabilitar(proyecto, 'habilitado', 'Estado de habilitación cambiado', 'deshabilitar_proyectos')"
+      (toggleVisibility)="toggleVisibility(proyecto)"
+      (toggleEnabled)="toggleEnabled(proyecto)"
     ></project-card>
   </div>
 </div>
@@ -44,8 +44,8 @@
         [canToggleEnabled]="tienePermisos('deshabilitar_proyectos') || tienePermisos('gestionar_usuarios_globales')"
         (edit)="editProject(proyecto)"
         (delete)="deleteProject(proyecto)"
-        (toggleVisibility)="ocultarODeshabilitar(proyecto, 'visible', 'Visibilidad cambiada', 'ocultar_proyectos')"
-        (toggleEnabled)="ocultarODeshabilitar(proyecto, 'habilitado', 'Estado de habilitación cambiado', 'deshabilitar_proyectos')"
+        (toggleVisibility)="toggleVisibility(proyecto)"
+        (toggleEnabled)="toggleEnabled(proyecto)"
       ></project-card>
     </div>
   </div>
