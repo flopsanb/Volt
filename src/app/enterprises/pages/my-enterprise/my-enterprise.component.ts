@@ -40,7 +40,7 @@ export class MyEnterpriseComponent implements OnInit {
   dataSource: MatTableDataSource<Usuario> = new MatTableDataSource();
   usuariosConectados: number[] = [];
   editMode = false;
-  displayedColumns: string[] = ['usuario', 'nombre_publico', 'observaciones', 'habilitado', 'conectado'];
+  displayedColumns: string[] = ['usuario', 'nombre_publico', 'observaciones', 'habilitado', 'conectado', 'acciones'];
 
   usuarioFilter = new FormControl('');
   nombrePublicoFilter = new FormControl('');
@@ -105,12 +105,6 @@ export class MyEnterpriseComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.dataSource.filterPredicate = this.createFilter();
-
-        if (this.tienePermisos('gestionar_mi_empresa')) {
-          if (!this.displayedColumns.includes('acciones')) {
-            this.displayedColumns.push('acciones');
-          }
-        }
       } else {
         this.snackBar.open(res.message ?? 'Error al cargar usuarios', 'Cerrar', { duration: 3000 });
       }
