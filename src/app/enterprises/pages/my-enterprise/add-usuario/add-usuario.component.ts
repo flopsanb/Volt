@@ -38,7 +38,7 @@ export class AddUsuarioComponent implements OnInit {
   // Lista de roles disponibles para el selector
   roles: Rol[] = [];
 
-  // Flags para mostrar errores si el usuario o email están duplicados
+  // EDrrores si el usuario o email están duplicados
   usuarioDuplicado: boolean = false;
   emailDuplicado: boolean = false;
 
@@ -139,11 +139,15 @@ export class AddUsuarioComponent implements OnInit {
     
     this.usuarioService.addUsuario(payload).subscribe({
       next: (res) => {
-        this.snackBar.open('✅ Usuario creado correctamente.', 'Cerrar', { duration: 3000 });
-        this.dialogRef.close({ ok: true, data: res.data });
+        if (res.ok) {
+          this.snackBar.open('✅ Usuario creado correctamente.', 'Cerrar', { duration: 3000 });
+          this.dialogRef.close({ ok: true, data: res.data });
+        } else {
+          this.snackBar.open('❌ Error: ' + res.message, 'Cerrar', { duration: 3000 });
+        }
       },
       error: () => {
-        this.snackBar.open('❌ Error al crear el usuario.', 'Cerrar', { duration: 3000 });
+        this.snackBar.open('❌ Error inesperado en el servidor.', 'Cerrar', { duration: 3000 });
       }
     });
   }

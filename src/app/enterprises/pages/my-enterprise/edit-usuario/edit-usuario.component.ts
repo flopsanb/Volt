@@ -26,7 +26,7 @@ export class EditUsuarioComponent implements OnInit {
   form: FormGroup;
   roles: Rol[] = [];
 
-  // Flags para mostrar errores si el usuario o email están duplicados
+  // Errores si el usuario o email están duplicados
   usuarioDuplicado: boolean = false;
   emailDuplicado: boolean = false;
 
