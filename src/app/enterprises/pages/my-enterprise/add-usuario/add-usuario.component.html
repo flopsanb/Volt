@@ -1,33 +1,58 @@
 <div class="container">
   <h3 mat-dialog-title>Añadir Usuario</h3>
 
-  <form class="mat-dialog-content" #formUsuario="ngForm">
+  <form class="mat-dialog-content" #formUsuario="ngForm" (ngSubmit)="checkDuplicadosYGuardar()">
 
+    <!-- Usuario -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Usuario</mat-label>
-        <input matInput name="usuario" [(ngModel)]="usuario.usuario" required />
+        <input
+          matInput
+          name="usuario"
+          [(ngModel)]="usuario.usuario"
+          required
+        />
+        <mat-error *ngIf="usuarioDuplicado">❌ El nombre de usuario ya está en uso.</mat-error>
       </mat-form-field>
     </div>
 
+    <!-- Contraseña -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Contraseña</mat-label>
-        <input matInput type="password" name="password" [(ngModel)]="password" required />
+        <input
+          matInput
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          required
+        />
       </mat-form-field>
     </div>
 
+    <!-- Nombre público -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Nombre público</mat-label>
-        <input matInput name="nombre_publico" [(ngModel)]="usuario.nombre_publico" />
+        <input
+          matInput
+          name="nombre_publico"
+          [(ngModel)]="usuario.nombre_publico"
+          required
+        />
       </mat-form-field>
     </div>
 
+    <!-- Rol -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Rol</mat-label>
-        <mat-select name="id_rol" [(ngModel)]="usuario.id_rol" required>
+        <mat-select
+          name="id_rol"
+          [(ngModel)]="usuario.id_rol"
+          required
+        >
           <mat-option *ngFor="let rol of roles" [value]="rol.id_rol">
             {{ rol.nombre_rol }}
           </mat-option>
@@ -35,29 +60,54 @@
       </mat-form-field>
     </div>
 
+    <!-- Email -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Email</mat-label>
-        <input matInput type="email" name="email" [(ngModel)]="usuario.email" required />
+        <input
+          matInput
+          type="email"
+          name="email"
+          [(ngModel)]="usuario.email"
+          required
+        />
+        <mat-error *ngIf="emailDuplicado">❌ El email ya está en uso.</mat-error>
       </mat-form-field>
     </div>
 
+    <!-- Observaciones -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Observaciones</mat-label>
-        <textarea matInput name="observaciones" [(ngModel)]="usuario.observaciones" rows="2"></textarea>
+        <textarea
+          matInput
+          name="observaciones"
+          [(ngModel)]="usuario.observaciones"
+          rows="2"
+        ></textarea>
       </mat-form-field>
     </div>
 
+    <!-- Habilitado -->
     <div class="form">
-      <mat-checkbox [(ngModel)]="usuario.habilitado" name="habilitado" [ngModelOptions]="{standalone: true}">
+      <mat-checkbox
+        [(ngModel)]="usuario.habilitado"
+        name="habilitado"
+        [ngModelOptions]="{ standalone: true }"
+      >
         Habilitado
       </mat-checkbox>
     </div>
 
+    <!-- Botones -->
     <div mat-dialog-actions align="end">
-      <button mat-button (click)="cancel()">Cancelar</button>
-      <button mat-raised-button color="primary" (click)="saveChanges()" [disabled]="!formUsuario.form.valid">
+      <button mat-button type="button" (click)="cancel()">Cancelar</button>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="!formUsuario.form.valid || usuarioDuplicado || emailDuplicado"
+      >
         Guardar
       </button>
     </div>

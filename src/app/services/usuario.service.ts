@@ -57,4 +57,20 @@ export class UsuarioService {
       withCredentials: true
     });
   }
+
+  checkUsernameExists(username: string): Observable<{ exists: boolean }> {
+    return this.http.get<{ exists: boolean }>(`${URL_API}/${ENDPOINT}.php?check_usuario=${username}`,{
+        headers: this.commonService.headers,
+        withCredentials: true
+      }
+    );
+  }
+
+  checkEmailExists(email: string): Observable<{ exists: boolean }> {
+    return this.http.get<{ exists: boolean }>(`${URL_API}/${ENDPOINT}.php?check_email=${email}`,{
+        headers: this.commonService.headers,
+        withCredentials: true
+      }
+    );
+  }
 }

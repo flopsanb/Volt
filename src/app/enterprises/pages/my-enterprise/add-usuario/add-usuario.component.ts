@@ -38,12 +38,16 @@ export class AddUsuarioComponent implements OnInit {
   // Lista de roles disponibles para el selector
   roles: Rol[] = [];
 
+  // Flags para mostrar errores si el usuario o email están duplicados
+  usuarioDuplicado: boolean = false;
+  emailDuplicado: boolean = false;
+
   constructor(
-    public dialogRef: MatDialogRef<AddUsuarioComponent>, // Referencia al diálogo actual
+    public dialogRef: MatDialogRef<AddUsuarioComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { id_empresa: number }, // ID de empresa recibido como dato
     private usuarioService: UsuarioService, // Servicio para operaciones de usuario
     private rolesService: RolesService,     // Servicio para cargar roles disponibles
-    private snackBar: MatSnackBar           // Componente para mostrar mensajes temporales
+    private snackBar: MatSnackBar           
   ) {}
 
   /**
@@ -76,6 +80,36 @@ export class AddUsuarioComponent implements OnInit {
     });
   }
 
+  checkDuplicadosYGuardar(): void {
+    const { usuario, email } = this.usuario;
+
+    // Si algo está vacío, no tiene sentido comprobar duplicados
+    if (!usuario.trim() || !email.trim()) {
+      this.snackBar.open('❌ Usuario y email son obligatorios.', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
+    this.usuarioService.checkUsernameExists(usuario).subscribe(resUsuario => {
+      this.usuarioDuplicado = resUsuario.exists;
+
+      this.usuarioService.checkEmailExists(email).subscribe(resEmail => {
+        this.emailDuplicado = resEmail.exists;
+
+        if (this.usuarioDuplicado) {
+          this.snackBar.open('❌ El nombre de usuario ya está en uso.', 'Cerrar', { duration: 3000 });
+          return;
+        }
+
+        if (this.emailDuplicado) {
+          this.snackBar.open('❌ El email ya está en uso.', 'Cerrar', { duration: 3000 });
+          return;
+        }
+
+        this.saveChanges(); // Solo guarda si todo está limpio
+      });
+    });
+  }
+
   /**
    * Guarda los cambios:
    * - Prepara el objeto con contraseña.
@@ -83,13 +117,26 @@ export class AddUsuarioComponent implements OnInit {
    * - Cierra el modal si todo va bien, muestra errores si falla.
    */
   saveChanges(): void {
+
+    // Validación de ' ' antes del envío
+    if (
+      !this.usuario.usuario.trim() ||
+      !this.password.trim() ||
+      !this.usuario.nombre_publico.trim() ||
+      !this.usuario.email.trim() ||
+      !this.usuario.id_rol ||
+      !this.usuario.id_empresa
+    ) {
+      this.snackBar.open('❌ Todos los campos obligatorios deben estar completos.', 'Cerrar', { duration: 3000 });
+      return;
+    }
     this.usuario.habilitado = this.usuario.habilitado ? 1 : 0;
 
     const payload = {
       ...this.usuario,
       password: this.password
     };
-
+    
     this.usuarioService.addUsuario(payload).subscribe({
       next: (res) => {
         this.snackBar.open('✅ Usuario creado correctamente.', 'Cerrar', { duration: 3000 });

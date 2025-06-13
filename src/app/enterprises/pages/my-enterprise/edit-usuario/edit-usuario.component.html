@@ -3,16 +3,21 @@
   <h2>Editar Usuario</h2>
 
   <!-- Formulario reactivo vinculado a 'form' definido en el componente TypeScript -->
-  <form [formGroup]="form" (ngSubmit)="save()">
+  <form [formGroup]="form" (ngSubmit)="checkDuplicadosYGuardar()">
 
     <!-- Campo de nombre de usuario (obligatorio) -->
     <mat-form-field appearance="fill" class="w-100">
       <mat-label>Usuario</mat-label>
-      <input matInput formControlName="usuario" required />
+      <input matInput formControlName="usuario" required (blur)="checkDuplicadosYGuardar()" />
+      <mat-error *ngIf="usuarioDuplicado">
+        ❌ El nombre de usuario ya está en uso.
+      </mat-error>
+      <mat-error *ngIf="form.controls['usuario'].hasError('required') && form.controls['usuario'].touched">
+        El nombre de usuario es obligatorio.
+      </mat-error>
     </mat-form-field>
 
     <!-- Campo para introducir una nueva contraseña (vacío por defecto) -->
-    <!-- Si no se rellena, se mantiene la actual -->
     <mat-form-field appearance="fill" class="w-100">
       <mat-label>Nueva Contraseña</mat-label>
       <input matInput type="password" formControlName="password" />
@@ -21,11 +26,13 @@
     <!-- Campo para editar el nombre público mostrado en la aplicación -->
     <mat-form-field appearance="fill" class="w-100">
       <mat-label>Nombre Público</mat-label>
-      <input matInput formControlName="nombre_publico" />
+      <input matInput formControlName="nombre_publico" required />
+      <mat-error *ngIf="form.controls['nombre_publico'].hasError('required') && form.controls['nombre_publico'].touched">
+        El nombre público es obligatorio.
+      </mat-error>
     </mat-form-field>
 
     <!-- Selector de rol del usuario -->
-    <!-- Solo se muestran los roles permitidos según el rol actual (controlado en el ts) -->
     <mat-form-field appearance="fill" class="w-100">
       <mat-label>Rol</mat-label>
       <mat-select formControlName="id_rol" required>
@@ -33,12 +40,24 @@
           {{ rol.nombre_rol }}
         </mat-option>
       </mat-select>
+      <mat-error *ngIf="form.controls['id_rol'].hasError('required') && form.controls['id_rol'].touched">
+        El rol es obligatorio.
+      </mat-error>
     </mat-form-field>
 
     <!-- Campo de correo electrónico (con validación de formato) -->
     <mat-form-field appearance="fill" class="w-100">
       <mat-label>Email</mat-label>
-      <input matInput formControlName="email" type="email" />
+      <input matInput formControlName="email" type="email" required (blur)="checkDuplicadosYGuardar()" />
+      <mat-error *ngIf="emailDuplicado">
+        ❌ El email ya está en uso.
+      </mat-error>
+      <mat-error *ngIf="form.controls['email'].hasError('required') && form.controls['email'].touched">
+        El email es obligatorio.
+      </mat-error>
+      <mat-error *ngIf="form.controls['email'].hasError('email') && form.controls['email'].touched">
+        Introduce un email válido.
+      </mat-error>
     </mat-form-field>
 
     <!-- Campo para observaciones o notas adicionales del usuario -->
@@ -53,10 +72,11 @@
     </mat-checkbox>
 
     <!-- Botones de acción: Cancelar o Guardar -->
-    <!-- Cancelar cierra el modal sin guardar, Guardar llama al método save() -->
     <mat-dialog-actions align="end">
       <button mat-button type="button" (click)="cancelar()">Cancelar</button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Guardar</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || usuarioDuplicado || emailDuplicado">
+        Guardar
+      </button>
     </mat-dialog-actions>
 
   </form>

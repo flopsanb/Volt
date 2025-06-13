@@ -23,49 +23,40 @@ import { Rol } from 'src/app/enterprises/interfaces/rol';
  */
 export class EditUsuarioComponent implements OnInit {
 
-  // Formulario reactivo que contiene todos los campos editables del usuario
   form: FormGroup;
-
-  // Lista de roles disponibles para selección en el formulario
   roles: Rol[] = [];
 
+  // Flags para mostrar errores si el usuario o email están duplicados
+  usuarioDuplicado: boolean = false;
+  emailDuplicado: boolean = false;
+
   constructor(
-    private fb: FormBuilder, // Constructor de formularios
-    private dialogRef: MatDialogRef<EditUsuarioComponent>, // Referencia al modal para poder cerrarlo
-    @Inject(MAT_DIALOG_DATA) public data: Usuario, // Datos del usuario a editar recibidos como input del modal
-    private usuarioService: UsuarioService, // Servicio para actualizar el usuario
-    private rolesService: RolesService, // Servicio para obtener los roles disponibles
-    private snackBar: MatSnackBar // Componente para mostrar mensajes temporales
+    private fb: FormBuilder,
+    private dialogRef: MatDialogRef<EditUsuarioComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: Usuario,
+    private usuarioService: UsuarioService,
+    private rolesService: RolesService,
+    private snackBar: MatSnackBar
   ) {
-    // Inicialización del formulario con los valores actuales del usuario recibido
     this.form = this.fb.group({
       id_usuario: [data.id_usuario],
       usuario: [data.usuario, Validators.required],
-      password: [''], // campo vacío, sólo se modifica si se introduce uno nuevo
-      nombre_publico: [data.nombre_publico],
+      password: [''],
+      nombre_publico: [data.nombre_publico, Validators.required],
       email: [data.email ?? '', [Validators.required, Validators.email]],
       observaciones: [data.observaciones ?? ''],
       id_rol: [data.id_rol, Validators.required],
-      id_empresa: [data.id_empresa],
-      habilitado: [data.habilitado === 1] // se transforma a booleano para el checkbox
+      id_empresa: [data.id_empresa, Validators.required],
+      habilitado: [data.habilitado === 1]
     });
   }
 
-  /**
-   * Al iniciar el componente, carga los roles disponibles según el rol del usuario actual.
-   * 
-   * Superadmin (1): puede ver todos los roles.
-   * Admin (2): no puede ver el rol 1.
-   * Admin de empresa (3): sólo ve roles 3 y 4.
-   */
   ngOnInit(): void {
     const rolActual = parseInt(localStorage.getItem('id_rol') || '0', 10);
 
     this.rolesService.getAllRoles().subscribe({
       next: (res) => {
         this.roles = res.data ?? [];
-
-        // Filtros según rol actual
         if (rolActual === 3) {
           this.roles = this.roles.filter(r => r.id_rol !== 1 && r.id_rol !== 2);
         }
@@ -80,11 +71,33 @@ export class EditUsuarioComponent implements OnInit {
   }
 
   /**
-   * Guarda los cambios si el formulario es válido.
-   * 
-   * Convierte el campo `habilitado` a 0/1 y envía el payload al backend.
-   * Si la operación es correcta, cierra el modal y muestra mensaje de éxito.
+   * Comprueba si usuario/email están duplicados antes de guardar.
    */
+  checkDuplicadosYGuardar(): void {
+    const { usuario, email } = this.form.value;
+
+    this.usuarioService.checkUsernameExists(usuario).subscribe(respuestaUsuario => {
+      this.usuarioDuplicado = respuestaUsuario.exists;
+
+      this.usuarioService.checkEmailExists(email).subscribe(respuestaEmail => {
+        this.emailDuplicado = respuestaEmail.exists;
+
+        if (this.usuarioDuplicado) {
+          this.snackBar.open('❌ El nombre de usuario ya están en uso.', 'Cerrar', { duration: 3000 });
+          return;
+        }
+
+        if (this.emailDuplicado) {
+          this.snackBar.open('❌ El email ya están en uso.', 'Cerrar', { duration: 3000 });
+          return;
+        }
+
+        this.save(); // Si no hay duplicados, se guarda
+      });
+    });
+  }
+
+
   save(): void {
     if (this.form.invalid) return;
 
@@ -103,9 +116,6 @@ export class EditUsuarioComponent implements OnInit {
     });
   }
 
-  /**
-   * Cierra el modal sin aplicar cambios.
-   */
   cancelar(): void {
     this.dialogRef.close({ ok: false });
   }
