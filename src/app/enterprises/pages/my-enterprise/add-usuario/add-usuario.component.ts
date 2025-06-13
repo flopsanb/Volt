@@ -6,14 +6,6 @@ import { RolesService } from 'src/app/services/roles.service';
 import { Usuario } from 'src/app/enterprises/interfaces/usuario';
 import { Rol } from 'src/app/enterprises/interfaces/rol';
 
-/**
- * Componente para añadir un nuevo usuario.
- * 
- * - Se abre como un diálogo (modal) desde la vista de usuarios.
- * - Permite introducir datos básicos, contraseña y rol.
- * - Valida usuario y email en tiempo real.
- * - Filtra roles según el rol del usuario actual.
- */
 @Component({
   selector: 'app-add-usuario',
   templateUrl: './add-usuario.component.html',
@@ -47,59 +39,73 @@ export class AddUsuarioComponent implements OnInit {
 
   ngOnInit(): void {
     this.usuario.id_empresa = this.data.id_empresa;
+    console.log('🟡 INIT: ID Empresa recibida:', this.usuario.id_empresa);
 
     const rolActual = parseInt(localStorage.getItem('id_rol') || '0', 10);
+    console.log('🟡 Rol actual desde localStorage:', rolActual);
 
     this.rolesService.getAllRoles().subscribe({
       next: (res) => {
         this.roles = res.data ?? [];
+        console.log('✅ Roles cargados:', this.roles);
 
         if (rolActual === 3) {
           this.roles = this.roles.filter(r => r.id_rol !== 1 && r.id_rol !== 2);
         }
-
         if (rolActual === 2) {
           this.roles = this.roles.filter(r => r.id_rol !== 1);
         }
+
+        console.log('🔹 Roles visibles tras filtro:', this.roles);
       },
-      error: () => {
+      error: (err) => {
+        console.error('❌ Error al cargar roles:', err);
         this.snackBar.open('Error al cargar los roles', 'Cerrar', { duration: 3000 });
       }
     });
   }
 
-  /**
-   * Comprueba en tiempo real si el usuario está duplicado
-   */
   validarUsuario(): void {
+    console.log('📤 Validando usuario:', this.usuario.usuario);
     if (this.usuario.usuario?.trim()) {
       this.usuarioService.checkUsernameExists(this.usuario.usuario).subscribe({
-        next: (res) => this.usuarioDuplicado = res.exists,
-        error: () => this.usuarioDuplicado = false
+        next: (res) => {
+          this.usuarioDuplicado = res.exists;
+          console.log('✅ Resultado validación usuario:', res);
+        },
+        error: (err) => {
+          this.usuarioDuplicado = false;
+          console.error('❌ Error en validación usuario:', err);
+        }
       });
     } else {
+      console.log('⚠️ Usuario vacío, no se valida');
       this.usuarioDuplicado = false;
     }
   }
 
-  /**
-   * Comprueba en tiempo real si el email está duplicado
-   */
   validarEmail(): void {
+    console.log('📤 Validando email:', this.usuario.email);
     if (this.usuario.email?.trim()) {
       this.usuarioService.checkEmailExists(this.usuario.email).subscribe({
-        next: (res) => this.emailDuplicado = res.exists,
-        error: () => this.emailDuplicado = false
+        next: (res) => {
+          this.emailDuplicado = res.exists;
+          console.log('✅ Resultado validación email:', res);
+        },
+        error: (err) => {
+          this.emailDuplicado = false;
+          console.error('❌ Error en validación email:', err);
+        }
       });
     } else {
+      console.log('⚠️ Email vacío, no se valida');
       this.emailDuplicado = false;
     }
   }
 
-  /**
-   * Guarda el nuevo usuario si todo es válido
-   */
   saveChanges(): void {
+    console.log('📥 Intentando guardar usuario:', this.usuario);
+
     if (
       !this.usuario.usuario.trim() ||
       !this.password.trim() ||
@@ -108,11 +114,13 @@ export class AddUsuarioComponent implements OnInit {
       !this.usuario.id_rol ||
       !this.usuario.id_empresa
     ) {
+      console.warn('⚠️ Campos incompletos:', this.usuario);
       this.snackBar.open('❌ Todos los campos obligatorios deben estar completos.', 'Cerrar', { duration: 3000 });
       return;
     }
 
     if (this.usuarioDuplicado || this.emailDuplicado) {
+      console.warn('⚠️ Campos duplicados: usuarioDuplicado=', this.usuarioDuplicado, 'emailDuplicado=', this.emailDuplicado);
       this.snackBar.open('❌ Corrige los errores antes de guardar.', 'Cerrar', { duration: 3000 });
       return;
     }
@@ -124,8 +132,11 @@ export class AddUsuarioComponent implements OnInit {
       password: this.password
     };
 
+    console.log('📤 Payload enviado al backend:', payload);
+
     this.usuarioService.addUsuario(payload).subscribe({
       next: (res) => {
+        console.log('✅ Respuesta del backend:', res);
         if (res.ok) {
           this.snackBar.open('✅ Usuario creado correctamente.', 'Cerrar', { duration: 3000 });
           this.dialogRef.close({ ok: true, data: res.data });
@@ -133,13 +144,15 @@ export class AddUsuarioComponent implements OnInit {
           this.snackBar.open('❌ Error: ' + res.message, 'Cerrar', { duration: 3000 });
         }
       },
-      error: () => {
+      error: (err) => {
+        console.error('❌ Error inesperado en el servidor:', err);
         this.snackBar.open('❌ Error inesperado en el servidor.', 'Cerrar', { duration: 3000 });
       }
     });
   }
 
   cancel(): void {
+    console.log('🔙 Cancelado por el usuario');
     this.dialogRef.close({ ok: false });
   }
 }
