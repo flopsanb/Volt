@@ -11,8 +11,8 @@ import { Rol } from 'src/app/enterprises/interfaces/rol';
  * 
  * - Se abre como un diálogo (modal) desde la vista de usuarios.
  * - Permite introducir datos básicos, contraseña y rol.
+ * - Valida usuario y email en tiempo real.
  * - Filtra roles según el rol del usuario actual.
- * - Al guardar, llama al servicio y cierra el modal.
  */
 @Component({
   selector: 'app-add-usuario',
@@ -21,7 +21,6 @@ import { Rol } from 'src/app/enterprises/interfaces/rol';
 })
 export class AddUsuarioComponent implements OnInit {
 
-  // Objeto que representa al nuevo usuario
   usuario: Usuario = {
     usuario: '',
     nombre_publico: '',
@@ -32,29 +31,20 @@ export class AddUsuarioComponent implements OnInit {
     observaciones: ''
   };
 
-  // Contraseña del nuevo usuario
   password: string = '';
-
-  // Lista de roles disponibles para el selector
   roles: Rol[] = [];
 
-  // EDrrores si el usuario o email están duplicados
   usuarioDuplicado: boolean = false;
   emailDuplicado: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<AddUsuarioComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { id_empresa: number }, // ID de empresa recibido como dato
-    private usuarioService: UsuarioService, // Servicio para operaciones de usuario
-    private rolesService: RolesService,     // Servicio para cargar roles disponibles
-    private snackBar: MatSnackBar           
+    @Inject(MAT_DIALOG_DATA) public data: { id_empresa: number },
+    private usuarioService: UsuarioService,
+    private rolesService: RolesService,
+    private snackBar: MatSnackBar
   ) {}
 
-  /**
-   * Inicializa el componente:
-   * - Asigna el ID de empresa al nuevo usuario.
-   * - Carga y filtra los roles según el rol del usuario actual.
-   */
   ngOnInit(): void {
     this.usuario.id_empresa = this.data.id_empresa;
 
@@ -64,12 +54,10 @@ export class AddUsuarioComponent implements OnInit {
       next: (res) => {
         this.roles = res.data ?? [];
 
-        // Los admin_empresa no pueden ver ni superadmin ni admin global
         if (rolActual === 3) {
           this.roles = this.roles.filter(r => r.id_rol !== 1 && r.id_rol !== 2);
         }
 
-        // Los admin globales no pueden asignar superadmin
         if (rolActual === 2) {
           this.roles = this.roles.filter(r => r.id_rol !== 1);
         }
@@ -80,45 +68,38 @@ export class AddUsuarioComponent implements OnInit {
     });
   }
 
-  checkDuplicadosYGuardar(): void {
-    const { usuario, email } = this.usuario;
-
-    // Si algo está vacío, no tiene sentido comprobar duplicados
-    if (!usuario.trim() || !email.trim()) {
-      this.snackBar.open('❌ Usuario y email son obligatorios.', 'Cerrar', { duration: 3000 });
-      return;
-    }
-
-    this.usuarioService.checkUsernameExists(usuario).subscribe(resUsuario => {
-      this.usuarioDuplicado = resUsuario.exists;
-
-      this.usuarioService.checkEmailExists(email).subscribe(resEmail => {
-        this.emailDuplicado = resEmail.exists;
-
-        if (this.usuarioDuplicado) {
-          this.snackBar.open('❌ El nombre de usuario ya está en uso.', 'Cerrar', { duration: 3000 });
-          return;
-        }
-
-        if (this.emailDuplicado) {
-          this.snackBar.open('❌ El email ya está en uso.', 'Cerrar', { duration: 3000 });
-          return;
-        }
-
-        this.saveChanges(); // Solo guarda si todo está limpio
+  /**
+   * Comprueba en tiempo real si el usuario está duplicado
+   */
+  validarUsuario(): void {
+    if (this.usuario.usuario?.trim()) {
+      this.usuarioService.checkUsernameExists(this.usuario.usuario).subscribe({
+        next: (res) => this.usuarioDuplicado = res.exists,
+        error: () => this.usuarioDuplicado = false
       });
-    });
+    } else {
+      this.usuarioDuplicado = false;
+    }
   }
 
   /**
-   * Guarda los cambios:
-   * - Prepara el objeto con contraseña.
-   * - Llama al servicio para registrar el nuevo usuario.
-   * - Cierra el modal si todo va bien, muestra errores si falla.
+   * Comprueba en tiempo real si el email está duplicado
+   */
+  validarEmail(): void {
+    if (this.usuario.email?.trim()) {
+      this.usuarioService.checkEmailExists(this.usuario.email).subscribe({
+        next: (res) => this.emailDuplicado = res.exists,
+        error: () => this.emailDuplicado = false
+      });
+    } else {
+      this.emailDuplicado = false;
+    }
+  }
+
+  /**
+   * Guarda el nuevo usuario si todo es válido
    */
   saveChanges(): void {
-
-    // Validación de ' ' antes del envío
     if (
       !this.usuario.usuario.trim() ||
       !this.password.trim() ||
@@ -130,13 +111,19 @@ export class AddUsuarioComponent implements OnInit {
       this.snackBar.open('❌ Todos los campos obligatorios deben estar completos.', 'Cerrar', { duration: 3000 });
       return;
     }
+
+    if (this.usuarioDuplicado || this.emailDuplicado) {
+      this.snackBar.open('❌ Corrige los errores antes de guardar.', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
     this.usuario.habilitado = this.usuario.habilitado ? 1 : 0;
 
     const payload = {
       ...this.usuario,
       password: this.password
     };
-    
+
     this.usuarioService.addUsuario(payload).subscribe({
       next: (res) => {
         if (res.ok) {
@@ -152,9 +139,6 @@ export class AddUsuarioComponent implements OnInit {
     });
   }
 
-  /**
-   * Cierra el diálogo sin hacer ningún cambio.
-   */
   cancel(): void {
     this.dialogRef.close({ ok: false });
   }

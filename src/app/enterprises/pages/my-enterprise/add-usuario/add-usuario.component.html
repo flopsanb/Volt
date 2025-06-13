@@ -1,7 +1,7 @@
 <div class="container">
   <h3 mat-dialog-title>Añadir Usuario</h3>
 
-  <form class="mat-dialog-content" #formUsuario="ngForm" (ngSubmit)="checkDuplicadosYGuardar()">
+  <form class="mat-dialog-content" #formUsuario="ngForm" (ngSubmit)="saveChanges()">
 
     <!-- Usuario -->
     <div class="form">
@@ -11,6 +11,7 @@
           matInput
           name="usuario"
           [(ngModel)]="usuario.usuario"
+          (ngModelChange)="validarUsuario()"
           required
         />
         <mat-error *ngIf="usuarioDuplicado">❌ El nombre de usuario ya está en uso.</mat-error>
@@ -69,6 +70,7 @@
           type="email"
           name="email"
           [(ngModel)]="usuario.email"
+          (ngModelChange)="validarEmail()"
           required
         />
         <mat-error *ngIf="emailDuplicado">❌ El email ya está en uso.</mat-error>
@@ -106,7 +108,11 @@
         mat-raised-button
         color="primary"
         type="submit"
-        [disabled]="!formUsuario.form.valid || usuarioDuplicado || emailDuplicado"
+        [disabled]="
+          !formUsuario.form.valid ||
+          usuarioDuplicado ||
+          emailDuplicado
+        "
       >
         Guardar
       </button>

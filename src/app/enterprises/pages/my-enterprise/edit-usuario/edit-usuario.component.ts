@@ -1,4 +1,3 @@
-// Importaciones necesarias para el funcionamiento del componente: formularios, diálogos, servicios y modelos.
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -14,19 +13,11 @@ import { Rol } from 'src/app/enterprises/interfaces/rol';
   templateUrl: './edit-usuario.component.html',
   styleUrls: ['./edit-usuario.component.css']
 })
-
-/**
- * Componente para editar usuarios dentro de la empresa.
- * 
- * Permite modificar datos como usuario, contraseña, email, nombre público, rol y estado (habilitado).
- * Usa ReactiveForms y se muestra dentro de un MatDialog.
- */
 export class EditUsuarioComponent implements OnInit {
 
   form: FormGroup;
   roles: Rol[] = [];
 
-  // Errores si el usuario o email están duplicados
   usuarioDuplicado: boolean = false;
   emailDuplicado: boolean = false;
 
@@ -68,38 +59,37 @@ export class EditUsuarioComponent implements OnInit {
         this.snackBar.open('Error al cargar roles', 'Cerrar', { duration: 3000 });
       }
     });
-  }
 
-  /**
-   * Comprueba si usuario/email están duplicados antes de guardar.
-   */
-  checkDuplicadosYGuardar(): void {
-    const { usuario, email } = this.form.value;
+    // Validación en tiempo real
+    this.form.get('usuario')?.valueChanges.subscribe(value => {
+      this.validarUsuario(value);
+    });
 
-    this.usuarioService.checkUsernameExists(usuario).subscribe(respuestaUsuario => {
-      this.usuarioDuplicado = respuestaUsuario.exists;
-
-      this.usuarioService.checkEmailExists(email).subscribe(respuestaEmail => {
-        this.emailDuplicado = respuestaEmail.exists;
-
-        if (this.usuarioDuplicado) {
-          this.snackBar.open('❌ El nombre de usuario ya están en uso.', 'Cerrar', { duration: 3000 });
-          return;
-        }
-
-        if (this.emailDuplicado) {
-          this.snackBar.open('❌ El email ya están en uso.', 'Cerrar', { duration: 3000 });
-          return;
-        }
-
-        this.save(); // Si no hay duplicados, se guarda
-      });
+    this.form.get('email')?.valueChanges.subscribe(value => {
+      this.validarEmail(value);
     });
   }
 
+  validarUsuario(value: string): void {
+    const idActual = this.form.get('id_usuario')?.value;
+    if (!value.trim()) return;
+
+    this.usuarioService.checkUsernameExists(value).subscribe(res => {
+      this.usuarioDuplicado = res.exists && value !== this.data.usuario;
+    });
+  }
+
+  validarEmail(value: string): void {
+    const idActual = this.form.get('id_usuario')?.value;
+    if (!value.trim()) return;
+
+    this.usuarioService.checkEmailExists(value).subscribe(res => {
+      this.emailDuplicado = res.exists && value !== this.data.email;
+    });
+  }
 
   save(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid || this.usuarioDuplicado || this.emailDuplicado) return;
 
     const payload = {
       ...this.form.value,
