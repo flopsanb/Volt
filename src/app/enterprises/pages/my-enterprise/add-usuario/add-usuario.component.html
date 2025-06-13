@@ -14,6 +14,9 @@
           (ngModelChange)="validarUsuario()"
           required
         />
+        <mat-error *ngIf="formUsuario.controls['usuario']?.invalid && formUsuario.controls['usuario']?.touched">
+          ❌ El campo usuario es obligatorio.
+        </mat-error>
         <mat-error *ngIf="usuarioDuplicado">❌ El nombre de usuario ya está en uso.</mat-error>
       </mat-form-field>
     </div>
@@ -29,6 +32,9 @@
           [(ngModel)]="password"
           required
         />
+        <mat-error *ngIf="formUsuario.controls['password']?.invalid && formUsuario.controls['password']?.touched">
+          ❌ La contraseña es obligatoria.
+        </mat-error>
       </mat-form-field>
     </div>
 
@@ -42,6 +48,9 @@
           [(ngModel)]="usuario.nombre_publico"
           required
         />
+        <mat-error *ngIf="formUsuario.controls['nombre_publico']?.invalid && formUsuario.controls['nombre_publico']?.touched">
+          ❌ El nombre público es obligatorio.
+        </mat-error>
       </mat-form-field>
     </div>
 
@@ -58,6 +67,9 @@
             {{ rol.nombre_rol }}
           </mat-option>
         </mat-select>
+        <mat-error *ngIf="formUsuario.controls['id_rol']?.invalid && formUsuario.controls['id_rol']?.touched">
+          ❌ El rol es obligatorio.
+        </mat-error>
       </mat-form-field>
     </div>
 
@@ -73,6 +85,9 @@
           (ngModelChange)="validarEmail()"
           required
         />
+        <mat-error *ngIf="formUsuario.controls['email']?.invalid && formUsuario.controls['email']?.touched">
+          ❌ El email es obligatorio y debe tener formato válido.
+        </mat-error>
         <mat-error *ngIf="emailDuplicado">❌ El email ya está en uso.</mat-error>
       </mat-form-field>
     </div>

@@ -58,19 +58,28 @@ export class UsuarioService {
     });
   }
 
-  checkUsernameExists(username: string): Observable<{ exists: boolean }> {
-    return this.http.get<{ exists: boolean }>(`${URL_API}/${ENDPOINT}.php?check_usuario=${username}`,{
-        headers: this.commonService.headers,
-        withCredentials: true
-      }
-    );
+  checkUsernameExists(username: string, excludeId?: number): Observable<{ exists: boolean }> {
+  let url = `${URL_API}/check_duplicados.php?usuario=${username}`;
+  if (excludeId) {
+    url += `&exclude_id=${excludeId}`;
   }
 
-  checkEmailExists(email: string): Observable<{ exists: boolean }> {
-    return this.http.get<{ exists: boolean }>(`${URL_API}/${ENDPOINT}.php?check_email=${email}`,{
-        headers: this.commonService.headers,
-        withCredentials: true
-      }
-    );
+  return this.http.get<{ exists: boolean }>(url, {
+    headers: this.commonService.headers,
+    withCredentials: true
+  });
+}
+
+checkEmailExists(email: string, excludeId?: number): Observable<{ exists: boolean }> {
+  let url = `${URL_API}/check_duplicados.php?email=${email}`;
+  if (excludeId) {
+    url += `&exclude_id=${excludeId}`;
   }
+
+  return this.http.get<{ exists: boolean }>(url, {
+    headers: this.commonService.headers,
+    withCredentials: true
+  });
+}
+
 }

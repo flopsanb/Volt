@@ -66,39 +66,27 @@ export class AddUsuarioComponent implements OnInit {
   }
 
   validarUsuario(): void {
-    console.log('📤 Validando usuario:', this.usuario.usuario);
     if (this.usuario.usuario?.trim()) {
       this.usuarioService.checkUsernameExists(this.usuario.usuario).subscribe({
         next: (res) => {
           this.usuarioDuplicado = res.exists;
-          console.log('✅ Resultado validación usuario:', res);
         },
-        error: (err) => {
-          this.usuarioDuplicado = false;
-          console.error('❌ Error en validación usuario:', err);
-        }
+        error: () => this.usuarioDuplicado = false
       });
     } else {
-      console.log('⚠️ Usuario vacío, no se valida');
       this.usuarioDuplicado = false;
     }
   }
 
   validarEmail(): void {
-    console.log('📤 Validando email:', this.usuario.email);
     if (this.usuario.email?.trim()) {
       this.usuarioService.checkEmailExists(this.usuario.email).subscribe({
         next: (res) => {
           this.emailDuplicado = res.exists;
-          console.log('✅ Resultado validación email:', res);
         },
-        error: (err) => {
-          this.emailDuplicado = false;
-          console.error('❌ Error en validación email:', err);
-        }
+        error: () => this.emailDuplicado = false
       });
     } else {
-      console.log('⚠️ Email vacío, no se valida');
       this.emailDuplicado = false;
     }
   }
