@@ -18,9 +18,6 @@ export class EditUsuarioComponent implements OnInit {
   form: FormGroup;
   roles: Rol[] = [];
 
-  usuarioDuplicado: boolean = false;
-  emailDuplicado: boolean = false;
-
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<EditUsuarioComponent>,
@@ -59,37 +56,10 @@ export class EditUsuarioComponent implements OnInit {
         this.snackBar.open('Error al cargar roles', 'Cerrar', { duration: 3000 });
       }
     });
-
-    // Validación en tiempo real
-    this.form.get('usuario')?.valueChanges.subscribe(value => {
-      this.validarUsuario(value);
-    });
-
-    this.form.get('email')?.valueChanges.subscribe(value => {
-      this.validarEmail(value);
-    });
-  }
-
-  validarUsuario(value: string): void {
-    const idActual = this.form.get('id_usuario')?.value;
-    if (!value.trim()) return;
-
-    this.usuarioService.checkUsernameExists(value).subscribe(res => {
-      this.usuarioDuplicado = res.exists && value !== this.data.usuario;
-    });
-  }
-
-  validarEmail(value: string): void {
-    const idActual = this.form.get('id_usuario')?.value;
-    if (!value.trim()) return;
-
-    this.usuarioService.checkEmailExists(value).subscribe(res => {
-      this.emailDuplicado = res.exists && value !== this.data.email;
-    });
   }
 
   save(): void {
-    if (this.form.invalid || this.usuarioDuplicado || this.emailDuplicado) return;
+    if (this.form.invalid) return;
 
     const payload = {
       ...this.form.value,
