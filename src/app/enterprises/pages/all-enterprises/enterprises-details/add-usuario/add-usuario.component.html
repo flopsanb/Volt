@@ -1,51 +1,80 @@
 <div class="container">
-  <!-- Título del modal para añadir un nuevo usuario -->
   <h3 mat-dialog-title>Añadir Usuario</h3>
 
-  <!-- Formulario reactivo -->
-  <form [formGroup]="form" class="mat-dialog-content">
+  <form class="mat-dialog-content" [formGroup]="form" (ngSubmit)="saveChanges()">
 
-    <!-- Campo: Nombre de usuario -->
+    <!-- Usuario -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Usuario</mat-label>
-        <input matInput formControlName="usuario" />
-        <mat-error *ngIf="form.get('usuario')?.hasError('required')">Campo obligatorio</mat-error>
-        <mat-error *ngIf="form.get('usuario')?.hasError('username')">Debe tener al menos 4 letras</mat-error>
+        <input matInput formControlName="usuario" required />
+        <mat-error *ngIf="form.get('usuario')?.hasError('required')">
+          ❌ El campo usuario es obligatorio.
+        </mat-error>
+        <mat-error *ngIf="form.get('usuario')?.hasError('usernameInvalid')">
+          ❌ El nombre de usuario debe tener al menos 4 caracteres.
+        </mat-error>
       </mat-form-field>
     </div>
 
-    <!-- Campo: Contraseña -->
+    <!-- Contraseña -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Contraseña</mat-label>
-        <input matInput type="password" formControlName="password" />
-        <mat-error *ngIf="form.get('password')?.hasError('required')">Campo obligatorio</mat-error>
-        <mat-error *ngIf="form.get('password')?.hasError('strongPassword')">Contraseña débil</mat-error>
+        <input matInput type="password" formControlName="password" required />
+        <mat-error *ngIf="form.get('password')?.hasError('required')">
+          ❌ La contraseña es obligatoria.
+        </mat-error>
+        <mat-error *ngIf="form.get('password')?.hasError('passwordWeak')">
+          ❌ Debe tener al menos 6 caracteres, una mayúscula, una minúscula y un carácter especial.
+        </mat-error>
       </mat-form-field>
     </div>
 
-    <!-- Campo: Nombre público -->
+    <!-- Nombre público -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Nombre público</mat-label>
-        <input matInput formControlName="nombre_publico" />
-        <mat-error *ngIf="form.get('nombre_publico')?.hasError('required')">Campo obligatorio</mat-error>
-        <mat-error *ngIf="form.get('nombre_publico')?.hasError('publicName')">Nombre inválido</mat-error>
+        <input matInput formControlName="nombre_publico" required />
+        <mat-error *ngIf="form.get('nombre_publico')?.hasError('required')">
+          ❌ El nombre público es obligatorio.
+        </mat-error>
+        <mat-error *ngIf="form.get('nombre_publico')?.hasError('tooShortPublicName')">
+          ❌ El nombre público debe tener al menos 4 caracteres.
+        </mat-error>
       </mat-form-field>
     </div>
 
-    <!-- Campo: Email -->
+    <!-- Rol -->
+    <div class="form">
+      <mat-form-field appearance="fill" color="accent">
+        <mat-label>Rol</mat-label>
+        <mat-select formControlName="id_rol" required>
+          <mat-option *ngFor="let rol of roles" [value]="rol.id_rol">
+            {{ rol.nombre_rol }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('id_rol')?.hasError('required')">
+          ❌ El rol es obligatorio.
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Email -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Email</mat-label>
-        <input matInput type="email" formControlName="email" />
-        <mat-error *ngIf="form.get('email')?.hasError('required')">Campo obligatorio</mat-error>
-        <mat-error *ngIf="form.get('email')?.hasError('strictEmail')">Email inválido</mat-error>
+        <input matInput type="email" formControlName="email" required />
+        <mat-error *ngIf="form.get('email')?.hasError('required')">
+          ❌ El email es obligatorio.
+        </mat-error>
+        <mat-error *ngIf="form.controls['email'].hasError('strictEmail') && form.controls['email'].touched">
+          ❌ Introduce un email válido (ej: nombre&#64;dominio.com).
+        </mat-error>
       </mat-form-field>
     </div>
 
-    <!-- Campo: Observaciones -->
+    <!-- Observaciones -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Observaciones</mat-label>
@@ -53,27 +82,19 @@
       </mat-form-field>
     </div>
 
-    <!-- Selector: Rol -->
+    <!-- Habilitado -->
     <div class="form">
-      <mat-form-field appearance="fill" color="accent">
-        <mat-label>Rol</mat-label>
-        <mat-select formControlName="id_rol">
-          <mat-option *ngFor="let rol of roles" [value]="rol.id_rol">{{ rol.nombre_rol }}</mat-option>
-        </mat-select>
-        <mat-error *ngIf="form.get('id_rol')?.hasError('required')">Selecciona un rol</mat-error>
-      </mat-form-field>
-    </div>
-
-    <!-- Checkbox: Habilitado -->
-    <div class="form">
-      <mat-checkbox formControlName="habilitado">Habilitado</mat-checkbox>
+      <mat-checkbox formControlName="habilitado">
+        Habilitado
+      </mat-checkbox>
     </div>
 
     <!-- Botones -->
     <div mat-dialog-actions align="end">
-      <button mat-button (click)="cancel()">Cancelar</button>
-      <button mat-raised-button color="primary" (click)="saveChanges()" [disabled]="form.invalid">Guardar</button>
+      <button mat-button type="button" (click)="cancel()">Cancelar</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+        Guardar
+      </button>
     </div>
-
   </form>
 </div>

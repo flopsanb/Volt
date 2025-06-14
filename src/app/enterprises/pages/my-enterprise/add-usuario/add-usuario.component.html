@@ -68,8 +68,8 @@
         <mat-error *ngIf="form.get('email')?.hasError('required')">
           ❌ El email es obligatorio.
         </mat-error>
-        <mat-error *ngIf="form.get('email')?.hasError('emailInvalid')">
-          ❌ El formato del email no es válido.
+        <mat-error *ngIf="form.controls['email'].hasError('strictEmail') && form.controls['email'].touched">
+          ❌ Introduce un email válido (ej: nombre&#64;dominio.com).
         </mat-error>
       </mat-form-field>
     </div>
