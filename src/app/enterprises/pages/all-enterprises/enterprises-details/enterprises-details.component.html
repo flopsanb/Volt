@@ -73,15 +73,15 @@
   <!-- Columna: Estado habilitado -->
   <ng-container matColumnDef="habilitado">
     <th mat-header-cell *matHeaderCellDef>Habilitado</th>
-    <td mat-cell *matCellDef="let user">{{ user.habilitado === 1 ? 'Sí' : 'No' }}</td>
+    <td mat-cell *matCellDef="let user">{{ user.habilitado === 1 ? '✅' : '🚫' }}</td>
   </ng-container>
 
   <!-- Columna: Estado de conexión del usuario -->
   <ng-container matColumnDef="conectado">
     <th mat-header-cell *matHeaderCellDef>Conectado</th>
     <td mat-cell *matCellDef="let user">
-      <span *ngIf="usuariosConectados.includes(user.id_usuario)">✅</span>
-      <span *ngIf="!usuariosConectados.includes(user.id_usuario)">❌</span>
+      <span *ngIf="usuariosConectados.includes(user.id_usuario)">🟢</span>
+      <span *ngIf="!usuariosConectados.includes(user.id_usuario)">🔴</span>
     </td>
   </ng-container>
 

@@ -2,60 +2,66 @@
   <!-- Título del formulario -->
   <h2>Editar Usuario</h2>
 
-  <!-- Formulario reactivo con validaciones y envío -->
+  <!-- Formulario reactivo con validaciones -->
   <form [formGroup]="form" (ngSubmit)="save()">
 
-    <!-- Campo: Nombre de usuario -->
+    <!-- Usuario -->
     <mat-form-field appearance="fill" class="w-100">
       <mat-label>Usuario</mat-label>
       <input matInput formControlName="usuario" required />
+      <mat-error *ngIf="form.get('usuario')?.hasError('required')">El usuario es obligatorio.</mat-error>
+      <mat-error *ngIf="form.get('usuario')?.hasError('invalidUsername')">Debe tener mínimo 4 letras.</mat-error>
     </mat-form-field>
 
-    <!-- Campo: Contraseña (solo se actualiza si se indica) -->
+    <!-- Contraseña -->
     <mat-form-field appearance="fill" class="w-100">
       <mat-label>Nueva Contraseña</mat-label>
       <input matInput type="password" formControlName="password" />
+      <mat-error *ngIf="form.get('password')?.hasError('invalidPassword')">
+        La contraseña debe tener al menos 6 caracteres, 1 mayúscula, 1 minúscula y 1 símbolo.
+      </mat-error>
     </mat-form-field>
 
-    <!-- Campo: Nombre público visible para otros -->
+    <!-- Nombre público -->
     <mat-form-field appearance="fill" class="w-100">
       <mat-label>Nombre Público</mat-label>
       <input matInput formControlName="nombre_publico" />
+      <mat-error *ngIf="form.get('nombre_publico')?.hasError('invalidPublicName')">
+        El nombre debe contener solo letras y espacios.
+      </mat-error>
     </mat-form-field>
 
-    <!-- Selector de rol del usuario -->
+    <!-- Rol -->
     <mat-form-field appearance="fill" class="w-100">
       <mat-label>Rol</mat-label>
       <mat-select formControlName="id_rol" required>
-        <!-- Carga dinámica de roles disponibles -->
-        <mat-option *ngFor="let rol of roles" [value]="rol.id_rol">
-          {{ rol.nombre_rol }}
-        </mat-option>
+        <mat-option *ngFor="let rol of roles" [value]="rol.id_rol">{{ rol.nombre_rol }}</mat-option>
       </mat-select>
+      <mat-error *ngIf="form.get('id_rol')?.hasError('required')">Debes seleccionar un rol.</mat-error>
     </mat-form-field>
 
-    <!-- Campo: Correo electrónico -->
+    <!-- Email -->
     <mat-form-field appearance="fill" class="w-100">
       <mat-label>Email</mat-label>
       <input matInput formControlName="email" type="email" />
+      <mat-error *ngIf="form.get('email')?.hasError('required')">El email es obligatorio.</mat-error>
+      <mat-error *ngIf="form.get('email')?.hasError('invalidEmail')">El formato del email no es válido.</mat-error>
     </mat-form-field>
 
-    <!-- Campo: Observaciones generales -->
+    <!-- Observaciones -->
     <mat-form-field appearance="fill" class="w-100">
       <mat-label>Observaciones</mat-label>
       <textarea matInput formControlName="observaciones"></textarea>
     </mat-form-field>
 
-    <!-- Checkbox: Estado de habilitación -->
-    <mat-checkbox formControlName="habilitado">
-      Habilitado
-    </mat-checkbox>
+    <!-- Habilitado -->
+    <mat-checkbox formControlName="habilitado">Habilitado</mat-checkbox>
 
-    <!-- Botones de acción (cancelar o guardar cambios) -->
+    <!-- Acciones -->
     <mat-dialog-actions align="end">
-      <button mat-button (click)="cancelar()">Cancelar</button>
+      <button mat-button type="button" (click)="cancelar()">Cancelar</button>
       <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Guardar</button>
     </mat-dialog-actions>
-
+    
   </form>
 </div>

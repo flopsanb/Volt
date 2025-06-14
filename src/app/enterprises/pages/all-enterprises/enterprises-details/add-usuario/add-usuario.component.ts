@@ -1,20 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Inject } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { RolesService } from 'src/app/services/roles.service';
-import { Usuario } from 'src/app/enterprises/interfaces/usuario';
 import { Rol } from 'src/app/enterprises/interfaces/rol';
+import { CustomValidators } from 'src/app/validators/custom-validators';
 
-/**
- * Componente para añadir un nuevo usuario.
- * 
- * - Se lanza como un diálogo desde la vista de usuarios.
- * - Carga los roles disponibles (según el rol actual).
- * - Envía la solicitud al backend para crear el usuario.
- */
 @Component({
   selector: 'app-add-usuario',
   templateUrl: './add-usuario.component.html',
@@ -22,82 +15,77 @@ import { Rol } from 'src/app/enterprises/interfaces/rol';
 })
 export class AddUsuarioComponent implements OnInit {
 
-  // Objeto de usuario que se enviará al backend
-  usuario: Usuario = {
-    usuario: '',
-    nombre_publico: '',
-    id_rol: null,
-    id_empresa: null,
-    habilitado: 1,
-    email: '',
-    observaciones: ''
-  };
-
-  password: string = '';     // Contraseña del nuevo usuario
-  roles: Rol[] = [];         // Lista de roles disponibles
+  form: FormGroup;
+  roles: Rol[] = [];
 
   constructor(
-  public dialogRef: MatDialogRef<AddUsuarioComponent>,
-  @Inject(MAT_DIALOG_DATA) public data: { id_empresa: number },
-  private usuarioService: UsuarioService,
-  private rolesService: RolesService,
-  private snackBar: MatSnackBar
-) {}
+    private fb: FormBuilder,
+    public dialogRef: MatDialogRef<AddUsuarioComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { id_empresa: number },
+    private usuarioService: UsuarioService,
+    private rolesService: RolesService,
+    private snackBar: MatSnackBar
+  ) {
+    // Inicializamos el formulario reactivo con validadores personalizados
+    this.form = this.fb.group({
+      usuario: ['', [Validators.required, CustomValidators.username]],
+      password: ['', [Validators.required, CustomValidators.strongPassword]],
+      nombre_publico: ['', [Validators.required, CustomValidators.publicName]],
+      email: ['', [Validators.required, CustomValidators.strictEmail]],
+      observaciones: [''],
+      id_rol: [null, Validators.required],
+      id_empresa: [data.id_empresa, Validators.required],
+      habilitado: [true]
+    });
+  }
 
-
-  /**
-   * Inicializa el componente:
-   * - Obtiene la empresa desde localStorage.
-   * - Carga roles según el rol actual del usuario autenticado.
-   */
   ngOnInit(): void {
-    this.usuario.id_empresa = this.data.id_empresa;
-
     const rolActual = parseInt(localStorage.getItem('id_rol') || '0', 10);
 
-    this.rolesService.getAllRoles().subscribe({
+    const roles$ = (rolActual === 1 || rolActual === 2)
+      ? this.rolesService.getAllRoles()
+      : this.rolesService.getRolesMiEmpresa();
+
+    roles$.subscribe({
       next: (res) => {
         this.roles = res.data ?? [];
-
-        // Si el rol actual es admin, filtra el rol superadmin
+        // Si es admin (2), quitar superadmin (1)
         if (rolActual === 2) {
           this.roles = this.roles.filter(r => r.id_rol !== 1);
         }
       },
       error: () => {
-        this.snackBar.open('Error al cargar los roles', 'Cerrar', { duration: 3000 });
+        this.snackBar.open('❌ Error al cargar los roles.', 'Cerrar', { duration: 3000 });
       }
     });
   }
 
-  /**
-   * Envia los datos del nuevo usuario al backend.
-   * - Valida estado de habilitado (1 o 0).
-   * - Incluye la contraseña como `pass_user`.
-   * - Cierra el diálogo si se creó correctamente.
-   */
   saveChanges(): void {
-    this.usuario.habilitado = this.usuario.habilitado ? 1 : 0;
+    if (this.form.invalid) {
+      this.snackBar.open('❌ Revisa los campos del formulario, hay errores.', 'Cerrar', { duration: 3000 });
+      return;
+    }
 
     const payload = {
-      ...this.usuario,
-      password: this.password // Se enviará como pass_user en el backend
+      ...this.form.value,
+      habilitado: this.form.value.habilitado ? 1 : 0
     };
 
     this.usuarioService.addUsuario(payload).subscribe({
       next: (res) => {
-        this.snackBar.open('Usuario creado correctamente.', 'Cerrar', { duration: 3000 });
-        this.dialogRef.close({ ok: true, data: res.data });
+        if (res.ok) {
+          this.snackBar.open('✅ Usuario creado correctamente.', 'Cerrar', { duration: 3000 });
+          this.dialogRef.close({ ok: true, data: res.data });
+        } else {
+          this.snackBar.open('❌ Error: ' + res.message, 'Cerrar', { duration: 3000 });
+        }
       },
       error: () => {
-        this.snackBar.open('Error al crear el usuario.', 'Cerrar', { duration: 3000 });
+        this.snackBar.open('❌ Error inesperado en el servidor.', 'Cerrar', { duration: 3000 });
       }
     });
   }
 
-  /**
-   * Cancela la operación y cierra el diálogo sin guardar.
-   */
   cancel(): void {
     this.dialogRef.close({ ok: false });
   }

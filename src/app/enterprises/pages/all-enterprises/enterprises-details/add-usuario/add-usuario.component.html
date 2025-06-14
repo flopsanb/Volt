@@ -2,72 +2,77 @@
   <!-- Título del modal para añadir un nuevo usuario -->
   <h3 mat-dialog-title>Añadir Usuario</h3>
 
-  <!-- Formulario usando Template-driven forms con validación -->
-  <form class="mat-dialog-content" #formUsuario="ngForm">
+  <!-- Formulario reactivo -->
+  <form [formGroup]="form" class="mat-dialog-content">
 
     <!-- Campo: Nombre de usuario -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Usuario</mat-label>
-        <input matInput name="usuario" [(ngModel)]="usuario.usuario" required />
+        <input matInput formControlName="usuario" />
+        <mat-error *ngIf="form.get('usuario')?.hasError('required')">Campo obligatorio</mat-error>
+        <mat-error *ngIf="form.get('usuario')?.hasError('username')">Debe tener al menos 4 letras</mat-error>
       </mat-form-field>
     </div>
 
-    <!-- Campo: Contraseña (obligatoria al crear usuario) -->
+    <!-- Campo: Contraseña -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Contraseña</mat-label>
-        <input matInput type="password" name="password" [(ngModel)]="password" required />
+        <input matInput type="password" formControlName="password" />
+        <mat-error *ngIf="form.get('password')?.hasError('required')">Campo obligatorio</mat-error>
+        <mat-error *ngIf="form.get('password')?.hasError('strongPassword')">Contraseña débil</mat-error>
       </mat-form-field>
     </div>
 
-    <!-- Campo: Nombre público del usuario -->
+    <!-- Campo: Nombre público -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Nombre público</mat-label>
-        <input matInput name="nombre_publico" [(ngModel)]="usuario.nombre_publico" />
+        <input matInput formControlName="nombre_publico" />
+        <mat-error *ngIf="form.get('nombre_publico')?.hasError('required')">Campo obligatorio</mat-error>
+        <mat-error *ngIf="form.get('nombre_publico')?.hasError('publicName')">Nombre inválido</mat-error>
       </mat-form-field>
     </div>
 
-    <!-- Selector: Rol del usuario (cargado dinámicamente) -->
-    <div class="form">
-      <mat-form-field appearance="fill" color="accent">
-        <mat-label>Rol</mat-label>
-        <mat-select name="id_rol" [(ngModel)]="usuario.id_rol" required>
-          <mat-option *ngFor="let rol of roles" [value]="rol.id_rol">
-            {{ rol.nombre_rol }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-
-    <!-- Campo: Email del usuario -->
+    <!-- Campo: Email -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Email</mat-label>
-        <input matInput type="email" name="email" [(ngModel)]="usuario.email" required />
+        <input matInput type="email" formControlName="email" />
+        <mat-error *ngIf="form.get('email')?.hasError('required')">Campo obligatorio</mat-error>
+        <mat-error *ngIf="form.get('email')?.hasError('strictEmail')">Email inválido</mat-error>
       </mat-form-field>
     </div>
 
-    <!-- Campo: Observaciones adicionales -->
+    <!-- Campo: Observaciones -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Observaciones</mat-label>
-        <textarea matInput name="observaciones" [(ngModel)]="usuario.observaciones" rows="2"></textarea>
+        <textarea matInput formControlName="observaciones" rows="2"></textarea>
       </mat-form-field>
     </div>
 
-    <!-- Checkbox: Usuario habilitado o no -->
+    <!-- Selector: Rol -->
     <div class="form">
-      <mat-checkbox [(ngModel)]="usuario.habilitado" name="habilitado" [ngModelOptions]="{standalone: true}">
-        Habilitado
-      </mat-checkbox>
+      <mat-form-field appearance="fill" color="accent">
+        <mat-label>Rol</mat-label>
+        <mat-select formControlName="id_rol">
+          <mat-option *ngFor="let rol of roles" [value]="rol.id_rol">{{ rol.nombre_rol }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('id_rol')?.hasError('required')">Selecciona un rol</mat-error>
+      </mat-form-field>
     </div>
 
-    <!-- Botones de acción: Cancelar o guardar usuario -->
+    <!-- Checkbox: Habilitado -->
+    <div class="form">
+      <mat-checkbox formControlName="habilitado">Habilitado</mat-checkbox>
+    </div>
+
+    <!-- Botones -->
     <div mat-dialog-actions align="end">
       <button mat-button (click)="cancel()">Cancelar</button>
-      <button mat-raised-button color="primary" (click)="saveChanges()" [disabled]="!formUsuario.form.valid">Guardar</button>
+      <button mat-raised-button color="primary" (click)="saveChanges()" [disabled]="form.invalid">Guardar</button>
     </div>
 
   </form>
