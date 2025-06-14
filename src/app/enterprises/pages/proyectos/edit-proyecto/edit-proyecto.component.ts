@@ -28,7 +28,7 @@ export class EditProyectoComponent implements OnInit {
   ) {
     // Inicializamos el formulario con los valores del proyecto a editar
     this.form = this.fb.group({
-      nombre_proyecto: [data.nombre_proyecto, [Validators.required, Validators.minLength(4)]],
+      nombre_proyecto: [data.nombre_proyecto, [Validators.required, Validators.minLength(3)]],
       iframe_proyecto: [data.iframe_proyecto, [Validators.required, CustomValidators.iframeValid]],
       visible: [!!data.visible],
       habilitado: [!!data.habilitado],

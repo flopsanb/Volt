@@ -1,5 +1,12 @@
 <!-- Contenedor principal con sombra -->
 <div class="example-container mat-elevation-z8">
+  <!-- Botón para añadir empresa (encima de la tabla) -->
+  <div class="acciones-superiores" *ngIf="tienePermisos('gestionar_empresas')">
+    <button mat-raised-button color="primary" (click)="addEnterprise()">
+      <mat-icon>add_circle</mat-icon> Añadir Empresa
+    </button>
+  </div>
+
   <div class="example-table-container">
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
 
@@ -51,17 +58,12 @@
 
       <!-- Acciones -->
       <ng-container matColumnDef="acciones">
-        <th mat-header-cell *matHeaderCellDef>
-          <button mat-icon-button (click)="addEnterprise()" *ngIf="tienePermisos('gestionar_empresas')">
-            <mat-icon>add_circle</mat-icon>
-          </button>
-        </th>
+        <th mat-header-cell *matHeaderCellDef> Acciones </th>
         <td mat-cell *matCellDef="let empresa">
           <button mat-icon-button (click)="openEnterpriseDetails(empresa)" *ngIf="tienePermisos('ver_empresas')">
             <mat-icon>assignment</mat-icon>
           </button>
-          <button mat-icon-button (click)="deleteEnterprise(empresa)"
-                  *ngIf="tienePermisos('gestionar_empresas') && empresa.id_empresa != 1">
+          <button mat-icon-button (click)="deleteEnterprise(empresa)" *ngIf="tienePermisos('gestionar_empresas') && empresa.id_empresa != 1">
             <mat-icon>delete</mat-icon>
           </button>
         </td>
@@ -73,7 +75,7 @@
           *matRowDef="let row; columns: displayedColumns;"
           [ngClass]="{ 'selected': selection.isSelected(row) }"
           (click)="selection.select(row)"
-          (dblclick)="tienePermisos('ver_empresas') && editEnterprise(row)">
+          >
       </tr>
     </table>
   </div>

@@ -68,9 +68,8 @@ export class AllEnterprisesComponent implements OnInit {
       this.onChanges();
 
       if (
-        !this.tienePermisos('crear_empresas') &&
-        !this.tienePermisos('editar_empresas') &&
-        !this.tienePermisos('borrar_empresas')
+        this.tienePermisos('editar_empresas') &&
+        this.tienePermisos('borrar_empresas')
       ) {
         this.displayedColumns.push('acciones');
       }

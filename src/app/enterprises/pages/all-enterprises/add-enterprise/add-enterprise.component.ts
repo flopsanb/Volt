@@ -28,8 +28,8 @@ export class AddEnterpriseComponent {
   ) {
     // Definimos el formulario y sus validaciones
     this.form = this.fb.group({
-      nombre_empresa: ['', [Validators.required]], // Campo obligatorio
-      logo_url: ['']                               // Campo opcional
+      nombre_empresa: ['', [Validators.required, Validators.minLength(4)]],
+      logo_url: ['']                               
     });
   }
 
