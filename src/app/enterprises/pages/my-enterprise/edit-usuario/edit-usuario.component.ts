@@ -42,20 +42,25 @@ export class EditUsuarioComponent implements OnInit {
   ngOnInit(): void {
     const rolActual = parseInt(localStorage.getItem('id_rol') || '0', 10);
 
-    this.rolesService.getAllRoles().subscribe({
-      next: (res) => {
-        this.roles = res.data ?? [];
-        if (rolActual === 3) {
-          this.roles = this.roles.filter(r => r.id_rol !== 1 && r.id_rol !== 2);
+    if (rolActual === 1 || rolActual === 2) {
+      this.rolesService.getAllRoles().subscribe({
+        next: (res) => {
+          this.roles = res.data ?? [];
+        },
+        error: () => {
+          this.snackBar.open('❌ Error al cargar todos los roles', 'Cerrar', { duration: 3000 });
         }
-        if (rolActual === 2) {
-          this.roles = this.roles.filter(r => r.id_rol !== 1);
+      });
+    } else {
+      this.rolesService.getRolesMiEmpresa().subscribe({
+        next: (res) => {
+          this.roles = res.data ?? [];
+        },
+        error: () => {
+          this.snackBar.open('❌ Error al cargar roles disponibles para tu empresa', 'Cerrar', { duration: 3000 });
         }
-      },
-      error: () => {
-        this.snackBar.open('Error al cargar roles', 'Cerrar', { duration: 3000 });
-      }
-    });
+      });
+    }
   }
 
   save(): void {

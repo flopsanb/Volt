@@ -51,14 +51,10 @@ export class RolesService {
     });
   }
 
-  removeRol(idRol: number): void {
-    this.roles = this.roles.filter(rol => rol.id_rol !== idRol);
-  }
-
-  updateRol(updatedRol: Rol): void {
-    const index = this.roles.findIndex(r => r.id_rol === updatedRol.id_rol);
-    if (index !== -1) {
-      this.roles[index] = updatedRol;
-    }
+  getRolesMiEmpresa(): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${URL_API}/roles_empresa.php`, {
+      headers: this.commonService.headers,
+      withCredentials: true
+    });
   }
 }
