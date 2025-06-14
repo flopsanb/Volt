@@ -33,7 +33,7 @@ export class AllEnterprisesComponent implements OnInit {
   proyectosTotalesFilter = new FormControl('');
 
   selection: SelectionModel<Enterprise> = new SelectionModel<Enterprise>(false, []);
-  displayedColumns: string[] = ['id_empresa', 'logo_url', 'nombre_empresa', 'empleados_totales', 'proyectos_totales', 'actions'];
+  displayedColumns: string[] = ['id_empresa', 'logo_url', 'nombre_empresa', 'empleados_totales', 'proyectos_totales'];
 
   private filterValues = {
     id_empresa: '',
@@ -72,7 +72,7 @@ export class AllEnterprisesComponent implements OnInit {
         !this.tienePermisos('editar_empresas') &&
         !this.tienePermisos('borrar_empresas')
       ) {
-        this.displayedColumns = this.displayedColumns.filter(col => col !== 'actions');
+        this.displayedColumns.push('acciones');
       }
     }
   }
