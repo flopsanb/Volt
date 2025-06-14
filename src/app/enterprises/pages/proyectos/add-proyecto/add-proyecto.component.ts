@@ -1,72 +1,69 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProjectService } from 'src/app/services/projects.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Project } from 'src/app/enterprises/interfaces/project.interface';
 import { EnterprisesService } from 'src/app/services/enterprises.service';
 
-/**
- * Componente para añadir un nuevo proyecto.
- * 
- * - Se abre como modal desde la lista de proyectos.
- * - Permite introducir nombre, iframe, visibilidad y empresa asociada.
- * - Envia la solicitud al backend para registrar el nuevo proyecto.
- */
 @Component({
   selector: 'app-add-proyecto',
   templateUrl: './add-proyecto.component.html',
   styleUrls: ['./add-proyecto.component.scss']
 })
 export class AddProyectoComponent implements OnInit {
-
-  // Estructura inicial del nuevo proyecto
-  proyecto: Project = {
-    nombre_proyecto: '',
-    iframe_proyecto: '',
-    visible: 1,
-    habilitado: 1,
-    id_empresa: null
-  } as unknown as Project;
-
-  // Lista de empresas para el select
+  form: FormGroup;
   empresas: any[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<AddProyectoComponent>,
+    private fb: FormBuilder,
     private projectService: ProjectService,
     private snackBar: MatSnackBar,
     private enterprisesService: EnterprisesService
-  ) {}
-
-  ngOnInit(): void {
-    // Cargar empresas disponibles al abrir el modal
-    this.enterprisesService.getAllEmpresas().subscribe(res => {
-      this.empresas = res.data;
+  ) {
+    this.form = this.fb.group({
+      nombre_proyecto: ['', [Validators.required, Validators.minLength(3)]],
+      iframe_proyecto: ['', Validators.required],
+      visible: [true],
+      habilitado: [true],
+      id_empresa: [null, Validators.required]
     });
   }
 
-  /**
-   * Guarda el nuevo proyecto enviando los datos al backend.
-   */
-  saveChanges(): void {
-    // Convierte bool a number para evitar fallos en php
-    this.proyecto.visible = this.proyecto.visible ? 1 : 0;
-    this.proyecto.habilitado = this.proyecto.habilitado ? 1 : 0;
-
-    this.projectService.addProyecto(this.proyecto).subscribe({
+  ngOnInit(): void {
+    this.enterprisesService.getAllEmpresas().subscribe({
       next: (res) => {
-        this.snackBar.open('Proyecto creado correctamente.', 'Cerrar', { duration: 3000 });
-        this.dialogRef.close({ ok: true, data: res.data });
+        this.empresas = res.data ?? [];
       },
       error: () => {
-        this.snackBar.open('Error al crear el proyecto.', 'Cerrar', { duration: 3000 });
+        this.snackBar.open('❌ Error al cargar empresas.', 'Cerrar', { duration: 3000 });
       }
     });
   }
 
-  /**
-   * Cierra el diálogo sin realizar cambios.
-   */
+  saveChanges(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const values = {
+      ...this.form.value,
+      visible: this.form.value.visible ? 1 : 0,
+      habilitado: this.form.value.habilitado ? 1 : 0
+    };
+
+    this.projectService.addProyecto(values).subscribe({
+      next: (res) => {
+        this.snackBar.open('✅ Proyecto creado correctamente.', 'Cerrar', { duration: 3000 });
+        this.dialogRef.close({ ok: true, data: res.data });
+      },
+      error: () => {
+        this.snackBar.open('❌ Error al crear el proyecto.', 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
   cancel(): void {
     this.dialogRef.close({ ok: false });
   }

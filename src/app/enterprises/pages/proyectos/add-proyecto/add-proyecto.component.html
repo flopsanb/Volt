@@ -2,14 +2,19 @@
 <div class="container">
   <h3 mat-dialog-title>Añadir proyecto</h3>
 
-  <!-- Formulario del proyecto -->
-  <form class="mat-dialog-content" #formProyecto="ngForm">
+  <form class="mat-dialog-content" [formGroup]="form" (ngSubmit)="saveChanges()">
 
     <!-- Nombre del proyecto -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Nombre del proyecto</mat-label>
-        <input matInput name="nombre_proyecto" [(ngModel)]="proyecto.nombre_proyecto" required />
+        <input matInput formControlName="nombre_proyecto" />
+        <mat-error *ngIf="form.controls['nombre_proyecto'].hasError('required')">
+          ❌ El nombre es obligatorio.
+        </mat-error>
+        <mat-error *ngIf="form.controls['nombre_proyecto'].hasError('minlength')">
+          ❌ Mínimo 4 caracteres.
+        </mat-error>
       </mat-form-field>
     </div>
 
@@ -17,20 +22,23 @@
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Iframe del informe</mat-label>
-        <textarea matInput rows="4" name="iframe_proyecto" [(ngModel)]="proyecto.iframe_proyecto" required></textarea>
+        <textarea matInput rows="4" formControlName="iframe_proyecto"></textarea>
+        <mat-error *ngIf="form.controls['iframe_proyecto'].hasError('required')">
+          ❌ El iframe es obligatorio.
+        </mat-error>
       </mat-form-field>
     </div>
 
     <!-- Visibilidad del proyecto -->
     <div class="form">
-      <mat-checkbox [(ngModel)]="proyecto.visible" name="visible" [ngModelOptions]="{standalone: true}">
+      <mat-checkbox formControlName="visible">
         Visible
       </mat-checkbox>
     </div>
 
     <!-- Disponibilidad del proyecto -->
     <div class="form">
-      <mat-checkbox [(ngModel)]="proyecto.habilitado" name="habilitado" [ngModelOptions]="{standalone: true}">
+      <mat-checkbox formControlName="habilitado">
         Habilitado
       </mat-checkbox>
     </div>
@@ -39,18 +47,21 @@
     <div class="form">
       <mat-form-field appearance="fill">
         <mat-label>Empresa</mat-label>
-        <mat-select [(ngModel)]="proyecto.id_empresa" name="id_empresa" required>
+        <mat-select formControlName="id_empresa">
           <mat-option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">
             {{ empresa.nombre_empresa }}
           </mat-option>
         </mat-select>
+        <mat-error *ngIf="form.controls['id_empresa'].hasError('required')">
+          ❌ Debes seleccionar una empresa.
+        </mat-error>
       </mat-form-field>
     </div>
 
     <!-- Botones de acción -->
     <div mat-dialog-actions align="end">
-      <button mat-button (click)="cancel()">Cancelar</button>
-      <button mat-raised-button color="primary" (click)="saveChanges()" [disabled]="!formProyecto.form.valid">Guardar</button>
+      <button mat-button type="button" (click)="cancel()">Cancelar</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Guardar</button>
     </div>
 
   </form>

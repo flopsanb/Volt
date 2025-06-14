@@ -1,24 +1,47 @@
 .mat-dialog-content {
-    overflow: hidden;
-    width: 18em;
+  overflow: visible !important;
+  padding: 0 1em;
+  width: auto;
+  min-width: 22em;
 }
 
 .container {
-    margin: 0 auto;
-    width: 18em;
-    text-align: center;
-    padding-top: 10px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  padding: 1em 0;
 }
 
 div.mat-dialog-actions {
-    width: 12em;
-    margin: auto;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1em;
+  margin-top: 1em;
 }
 
-div#contain {
-    text-align: justify;
+.form {
+  margin: 0.5em 0;
+  text-align: left;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+mat-checkbox {
+  margin-top: 0.5em;
 }
 
 .form.habilitado {
-    text-align: left !important;
+  text-align: left !important;
+}
+
+mat-error {
+  font-size: 0.8rem;
+  color: red;
+  margin-top: -0.5em;
+  margin-bottom: 0.5em;
+  display: block;
 }

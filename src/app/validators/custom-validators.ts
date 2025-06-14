@@ -23,6 +23,9 @@ export class CustomValidators {
   // Contraseña: mínimo 6 caracteres, 1 mayus, 1 minus, 1 especial
   static strongPassword(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
+
+    if (!value) return null;
+    
     const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{6,}$/;
     if (!value || !pattern.test(value)) {
       return { passwordWeak: true };

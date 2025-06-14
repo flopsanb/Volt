@@ -5,14 +5,17 @@
 <div class="container">
   <h3 mat-dialog-title>Editar proyecto</h3>
 
-  <!-- Formulario reactivo con ngModel -->
-  <form class="mat-dialog-content" #formProyecto="ngForm">
+  <!-- Formulario reactivo -->
+  <form class="mat-dialog-content" [formGroup]="form">
 
     <!-- Campo: Nombre del proyecto -->
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Nombre del proyecto</mat-label>
-        <input matInput name="nombre_proyecto" [(ngModel)]="proyecto.nombre_proyecto" required />
+        <input matInput formControlName="nombre_proyecto" required />
+        <mat-error *ngIf="form.controls['nombre_proyecto'].invalid && form.controls['nombre_proyecto'].touched">
+          El nombre del proyecto es obligatorio y debe tener al menos 4 caracteres.
+        </mat-error>
       </mat-form-field>
     </div>
 
@@ -20,40 +23,46 @@
     <div class="form">
       <mat-form-field appearance="fill" color="accent">
         <mat-label>Iframe del informe</mat-label>
-        <textarea matInput rows="4" name="iframe_proyecto" [(ngModel)]="proyecto.iframe_proyecto" required></textarea>
+        <textarea matInput rows="4" formControlName="iframe_proyecto" required></textarea>
+        <mat-error *ngIf="form.controls['iframe_proyecto'].invalid && form.controls['iframe_proyecto'].touched">
+          El iframe del informe es obligatorio.
+        </mat-error>
       </mat-form-field>
     </div>
 
     <!-- Checkbox: visibilidad del proyecto -->
     <div class="form">
-      <mat-checkbox [(ngModel)]="proyecto.visible" name="visible" [ngModelOptions]="{standalone: true}">
+      <mat-checkbox formControlName="visible">
         Visible
       </mat-checkbox>
     </div>
 
     <!-- Checkbox: habilitado -->
     <div class="form">
-      <mat-checkbox [(ngModel)]="proyecto.habilitado" name="habilitado" [ngModelOptions]="{standalone: true}">
+      <mat-checkbox formControlName="habilitado">
         Habilitado
       </mat-checkbox>
     </div>
 
-    <!-- Selector de empresa (solo visible si se cargaron empresas) -->
-    <div class="form" *ngIf="empresas.length > 0">
+    <!-- Selector de empresa (solo si es global admin) -->
+    <div class="form" *ngIf="isGlobalAdmin">
       <mat-form-field appearance="fill">
         <mat-label>Empresa</mat-label>
-        <mat-select [(ngModel)]="proyecto.id_empresa" name="id_empresa" required>
+        <mat-select formControlName="id_empresa" required>
           <mat-option *ngFor="let empresa of empresas" [value]="empresa.id_empresa">
             {{ empresa.nombre_empresa }}
           </mat-option>
         </mat-select>
+        <mat-error *ngIf="form.controls['id_empresa'].invalid && form.controls['id_empresa'].touched">
+          Debes seleccionar una empresa.
+        </mat-error>
       </mat-form-field>
     </div>
 
     <!-- Acciones del diálogo -->
     <div mat-dialog-actions align="end">
       <button mat-button (click)="cancel()">Cancelar</button>
-      <button mat-raised-button color="primary" (click)="saveChanges()" [disabled]="!formProyecto.form.valid">
+      <button mat-raised-button color="primary" (click)="saveChanges()" [disabled]="form.invalid">
         Guardar
       </button>
     </div>
