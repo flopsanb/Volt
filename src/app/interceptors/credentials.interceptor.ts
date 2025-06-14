@@ -3,10 +3,18 @@ import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/c
 import { Observable } from 'rxjs';
 
 @Injectable()
-
 export class CredentialsInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const clonedRequest = req.clone({ withCredentials: true });
+    const token = localStorage.getItem('token');
+
+    const clonedRequest = req.clone({
+      withCredentials: true,
+      setHeaders: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      }
+    });
+
     return next.handle(clonedRequest);
   }
 }

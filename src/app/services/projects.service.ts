@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { URL_API } from 'src/environments/environments';
 import { Project } from '../enterprises/interfaces/project.interface';
 import { Observable } from 'rxjs';
-import { CommonService } from './common.service';
 import { ApiResponse } from '../auth/interfaces/api-response';
 
 const ENDPOINT = 'proyecto';
@@ -19,51 +18,22 @@ export class ProjectService {
 
   proyectos: Project[] = [];
 
-  constructor(
-    private http: HttpClient,
-    private commonService: CommonService
-  ) {}
+  constructor(private http: HttpClient) {}
 
   getAllProyectos(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(
-      `${URL_API}/${ENDPOINT}.php`,
-      {
-        headers: this.commonService.headers,
-        withCredentials: true
-      }
-    );
+    return this.http.get<ApiResponse>(`${URL_API}/${ENDPOINT}.php`);
   }
 
   addProyecto(proyecto: Project): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(
-      `${URL_API}/${ENDPOINT}.php`,
-      proyecto,
-      {
-        headers: this.commonService.headers,
-        withCredentials: true
-      }
-    );
+    return this.http.post<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, proyecto);
   }
 
   editProyecto(proyecto: Project): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(
-      `${URL_API}/${ENDPOINT}.php`,
-      proyecto,
-      {
-        headers: this.commonService.headers,
-        withCredentials: true
-      }
-    );
+    return this.http.put<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, proyecto);
   }
 
   deleteProyecto(idProyecto: string | number): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(
-      `${URL_API}/${ENDPOINT}.php?id=${idProyecto}`,
-      {
-        headers: this.commonService.headers,
-        withCredentials: true
-      }
-    );
+    return this.http.delete<ApiResponse>(`${URL_API}/${ENDPOINT}.php?id=${idProyecto}`);
   }
 
   removeProyecto(idProyecto: number): void {

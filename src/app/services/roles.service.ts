@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { URL_API } from 'src/environments/environments';
 import { Rol } from '../enterprises/interfaces/rol';
 import { Observable } from 'rxjs';
-import { CommonService } from './common.service';
 import { ApiResponse } from '../auth/interfaces/api-response';
 
 const ENDPOINT = 'rol';
@@ -16,45 +15,25 @@ const ENDPOINT = 'rol';
 })
 export class RolesService {
 
-  roles: Rol[] = [];
-
-  constructor(
-    private http: HttpClient,
-    private commonService: CommonService
-  ) {}
+  constructor(private http: HttpClient) {}
 
   getAllRoles(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, {
-      headers: this.commonService.headers,
-      withCredentials: true
-    });
+    return this.http.get<ApiResponse>(`${URL_API}/${ENDPOINT}.php`);
   }
 
   addRol(rol: Rol): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, rol, {
-      headers: this.commonService.headers,
-      withCredentials: true
-    });
+    return this.http.post<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, rol);
   }
 
   editRol(rol: Rol): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, rol, {
-      headers: this.commonService.headers,
-      withCredentials: true
-    });
+    return this.http.put<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, rol);
   }
 
   deleteRol(idRol: number | string): Observable<ApiResponse> {
-    return this.http.delete<ApiResponse>(`${URL_API}/${ENDPOINT}.php?id=${idRol}`, {
-      headers: this.commonService.headers,
-      withCredentials: true
-    });
+    return this.http.delete<ApiResponse>(`${URL_API}/${ENDPOINT}.php?id=${idRol}`);
   }
 
   getRolesMiEmpresa(): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${URL_API}/roles_empresa.php`, {
-      headers: this.commonService.headers,
-      withCredentials: true
-    });
+    return this.http.get<ApiResponse>(`${URL_API}/roles_empresa.php`);
   }
 }

@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { catchError, map, Observable, of } from 'rxjs';
 import { URL_API } from 'src/environments/environments';
 import { ApiResponse } from '../auth/interfaces/api-response';
-import { CommonService } from './common.service';
 
 /**
  * Servicio que gestiona el envío de tickets de soporte desde el frontend hacia el backend.
@@ -13,10 +12,7 @@ import { CommonService } from './common.service';
 })
 export class SoporteService {
 
-  constructor(
-    private http: HttpClient,
-    private commonService: CommonService
-  ) {}
+  constructor(private http: HttpClient) {}
 
   /**
    * Envía un ticket de soporte con los datos del usuario.
@@ -24,10 +20,7 @@ export class SoporteService {
    * @returns Observable con la respuesta del servidor.
    */
   enviarTicket(data: { asunto: string, mensaje: string, email: string }): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${URL_API}/soporte.php`, data, {
-      headers: this.commonService.headers,
-      withCredentials: true
-    }).pipe(
+    return this.http.post<ApiResponse>(`${URL_API}/soporte.php`, data).pipe(
       map(res => res),
       catchError(() => of({
         ok: false,

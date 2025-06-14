@@ -3,9 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { map, Observable, of, catchError } from 'rxjs';
 import { URL_API } from 'src/environments/environments';
-import { CommonService } from './common.service';
 import { ApiResponse } from '../auth/interfaces/api-response';
-import { EstadoConexionService } from './estado-conexion.service';
 
 /**
  * Servicio de autenticación: gestiona login, logout, validación de token,
@@ -21,30 +19,27 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private cookieService: CookieService,
-    private commonService: CommonService,
-    private estadoConexionService: EstadoConexionService
   ) {}
 
   /** ========= LOGIN ========= */
 
-  doLogin(data: any) {
-    const body = JSON.stringify(data);
-    return this.http.post<ApiResponse>(`${URL_API}/login.php`, body, {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    });
+  doLogin(data: any): Observable<ApiResponse> {
+    return this.http.post<ApiResponse>(`${URL_API}/login.php`, data);
   }
 
   /** ========= LOGOUT ========= */
 
   doLogout(): Observable<any> {
-    const body = new FormData();
-    body.append('user', localStorage.getItem('usuario') || '');
+    const body = {
+      user: localStorage.getItem('usuario') || ''
+    };
+
     this.cookieService.deleteAll();
     localStorage.clear();
+
     return this.http.post(`${URL_API}/logout.php`, body);
   }
+
 
   /** ========= TOKEN ========= */
 
@@ -54,8 +49,7 @@ export class AuthService {
 
     return this.http.post<ApiResponse>(
       `${URL_API}/check_token.php`,
-      { token },
-      { headers: this.commonService.headers }
+      { token }
     ).pipe(
       map(res => res.ok),
       catchError(() => of(false))
@@ -69,8 +63,7 @@ export class AuthService {
 
     return this.http.post<ApiResponse>(
       `${URL_API}/check_user.php`,
-      { usuario },
-      { headers: this.commonService.headers }
+      { usuario }
     ).pipe(
       map(res => res.ok),
       catchError(() => of(false))
@@ -79,51 +72,33 @@ export class AuthService {
 
   /** ========= HEARTBEAT (conexión activa) ========= */  
   public startHeartbeat(): void {
-    this.stopHeartbeat(); // Limpia cualquier intervalo previo
-    console.log('[HEARTBEAT] Iniciando secuencia...');
+    this.stopHeartbeat();
 
-    const tryStart = () => {
-      const id_usuario = localStorage.getItem('id_usuario');
-
-      if (!id_usuario) {
-        setTimeout(tryStart, 500); // Reintenta en 500ms si aún no está disponible
+    const waitForIdAndStart = () => {
+      const id = localStorage.getItem('id_usuario');
+      if (!id) {
+        setTimeout(waitForIdAndStart, 500);
         return;
       }
-
-      console.log('[HEARTBEAT] Primer heartbeat lanzado con id_usuario:', id_usuario);
-      this.sendHeartbeat(parseInt(id_usuario)); // Primer heartbeat
-      this.heartbeatIntervalId = setInterval(() => {
-        console.log('[HEARTBEAT] Intervalo activo: enviando ping de vida...')
-        this.sendHeartbeat(parseInt(id_usuario));
-      }, 60 * 1000);
+      const id_usuario = +id;
+      this.sendHeartbeat(id_usuario);
+      this.heartbeatIntervalId = setInterval(() => this.sendHeartbeat(id_usuario), 60000);
     };
 
-    tryStart();
+    waitForIdAndStart();
   }
 
   // Envía un heartbeat al backend para mantener el estado de conexión
   private sendHeartbeat(id_usuario: number): void {
-    console.log('[HEARTBEAT] Enviando heartbeat al backend con id_usuario:', id_usuario);
-    this.http.post<ApiResponse>(
-      `${URL_API}/estado_conexion.php`,
-      { id_usuario },
-      { headers: this.commonService.headers }
-    ).pipe(
-      catchError((err) => {
-        console.error('[HEARTBEAT] Error en petición heartbeat:', err);
-        return of(null);
-      })
-    ).subscribe((res) => {
-      console.log('[HEARTBEAT] Respuesta del backend:', res);
-    });
+    this.http.post<ApiResponse>(`${URL_API}/estado_conexion.php`, { id_usuario })
+      .pipe(catchError(() => of(null)))
+      .subscribe();
   }
 
   // Detiene el envío automático de heartbeats
   public stopHeartbeat(): void {
-    if (this.heartbeatIntervalId) {
-      clearInterval(this.heartbeatIntervalId);
-      this.heartbeatIntervalId = null;
-    }
+    clearInterval(this.heartbeatIntervalId);
+    this.heartbeatIntervalId = null;
   }
 
   /**
@@ -131,14 +106,12 @@ export class AuthService {
    * Usa `sendBeacon` para asegurar que la solicitud se envía incluso si la página se está cerrando.
    */
   public sendFinalHeartbeat(): void {
-    const id_usuario = localStorage.getItem('id_usuario');
-    if (!id_usuario) return;
+    const id = localStorage.getItem('id_usuario');
+    if (!id) return;
 
-    const blob = new Blob(
-      [JSON.stringify({ id_usuario: parseInt(id_usuario) })],
-      { type: 'application/json' }
+    navigator.sendBeacon(
+      `${URL_API}/estado_conexion.php`,
+      new Blob([JSON.stringify({ id_usuario: +id })], { type: 'application/json' })
     );
-
-    navigator.sendBeacon(`${URL_API}/estado_conexion.php`, blob);
   }
 }
