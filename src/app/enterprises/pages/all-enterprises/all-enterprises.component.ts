@@ -53,42 +53,26 @@ export class AllEnterprisesComponent implements OnInit {
   }
 
   tienePermisos(clave: string): boolean {
-    const permiso = this.rawPermises?.[clave] === 1;
-    console.log(`Permiso [${clave}]:`, permiso);
-    return permiso;
+    return this.rawPermises?.[clave] === 1;
   }
 
   async getEnterprises() {
     const RESPONSE = await this.enterpriseService.getAllEmpresas().toPromise();
     this.rawPermises = RESPONSE?.permises ?? {};
-    console.log('📦 Permisos recibidos del backend:', this.rawPermises);
 
     if (RESPONSE?.ok) {
       this.dataSource.data = RESPONSE.data as Enterprise[];
-
       if (this.sort) this.dataSource.sort = this.sort;
       if (this.paginator) this.dataSource.paginator = this.paginator;
-
       this.dataSource.filterPredicate = this.createFilter();
       this.onChanges();
 
-      console.log('🔍 Evaluando condiciones para añadir columna de acciones...');
-      const puedeEditar = this.tienePermisos('editar_empresas');
-      const puedeBorrar = this.tienePermisos('borrar_empresas');
-      const puedeCrear = this.tienePermisos('crear_empresas');
-
-      console.log('📝 crear_empresas:', puedeCrear);
-      console.log('✏️ editar_empresas:', puedeEditar);
-      console.log('🗑️ borrar_empresas:', puedeBorrar);
-
-      if (puedeCrear && puedeEditar && puedeBorrar) {
-        console.log('✅ Añadiendo columna "acciones"');
+      if (
+        this.tienePermisos('gestionar_empresas') &&
+        this.tienePermisos('borrar_empresas')
+      ) {
         this.displayedColumns.push('acciones');
-      } else {
-        console.warn('🚫 No se cumplen todos los permisos para mostrar "acciones".');
       }
-    } else {
-      console.error('❌ Error cargando empresas:', RESPONSE?.message);
     }
   }
 
@@ -105,7 +89,7 @@ export class AllEnterprisesComponent implements OnInit {
   }
 
   async editEnterprise(empresa: Enterprise) {
-    if (!this.tienePermisos('editar_empresas')) return;
+    if (!this.tienePermisos('gestionar_empresas')) return;
 
     const dialogRef = this.dialog.open(EnterprisesDetailsComponent, {
       data: empresa,
