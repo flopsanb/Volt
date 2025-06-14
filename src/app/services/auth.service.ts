@@ -90,9 +90,9 @@ export class AuthService {
         return;
       }
 
-      this.sendHeartbeat(parseInt(id_usuario), token, true); // Primer heartbeat
+      this.sendHeartbeat(parseInt(id_usuario)); // Primer heartbeat
       this.heartbeatIntervalId = setInterval(() => {
-        this.sendHeartbeat(parseInt(id_usuario), token);
+        this.sendHeartbeat(parseInt(id_usuario));
       }, 60 * 1000);
     };
 
@@ -100,21 +100,14 @@ export class AuthService {
   }
 
   // Envía un heartbeat al backend para mantener el estado de conexión
-  private sendHeartbeat(id_usuario: number, token: string, inicial: boolean = false): void {
-    fetch(`${URL_API}/estado_conexion.php?action=registrar`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
-      body: JSON.stringify({ id_usuario })
-    })
-      .then(res => {
-        if (!res.ok) throw new Error(`Respuesta NO OK → status: ${res.status}`);
-        return res.json();
-      })
-      .catch(err => {
-      });
+  private sendHeartbeat(id_usuario: number): void {
+    this.http.post<ApiResponse>(
+      `${URL_API}/estado_conexion.php`,
+      { id_usuario },
+      { headers: this.commonService.headers }
+    ).pipe(
+      catchError(() => of(null)) // Ignora errores
+    ).subscribe();
   }
 
   // Detiene el envío automático de heartbeats
@@ -131,9 +124,7 @@ export class AuthService {
    */
   public sendFinalHeartbeat(): void {
     const id_usuario = localStorage.getItem('id_usuario');
-    if (!id_usuario) {
-      return;
-    }
+    if (!id_usuario) return;
 
     const blob = new Blob(
       [JSON.stringify({ id_usuario: parseInt(id_usuario) })],

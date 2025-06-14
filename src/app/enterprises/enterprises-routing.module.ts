@@ -4,7 +4,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { LayoutPageComponent } from './pages/layout-page/layout-page.component';
 import { MainPageComponent } from './pages/main-page/main-page.component';
 import { SoporteComponent } from './pages/soporte/soporte.component';
-import { LogsComponent } from './pages/logs/logs.component';
 import { Error404PageComponent } from '../shared/pages/error404-page/error404-page.component';
 
 /**
@@ -27,7 +26,6 @@ const routes: Routes = [
       { path: 'proyectos', loadChildren: () => import('./pages/proyectos/proyectos.module').then(m => m.ProyectosModule) },
 
       // Rutas directas
-      { path: 'logs', component: LogsComponent },
       { path: 'soporte', component: SoporteComponent },
 
       // Ruta para manejar errores 404 dentro del módulo

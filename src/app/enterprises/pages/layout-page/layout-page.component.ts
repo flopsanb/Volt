@@ -40,10 +40,6 @@ export class LayoutPageComponent implements OnInit {
       case '1': // superadmin
       case '2': // admin
         this.sidebarItems.push({ label: 'Gestionar empresas', icon: 'apartment', url: './empresas' });
-        // this.sidebarItems.push({ label: 'Logs', icon: 'history', url: './logs' }); // Comentado intencionadamente
-        break;
-      case '3': // admin_empresa
-        // this.sidebarItems.push({ label: 'Logs', icon: 'history', url: './logs' }); // Comentado intencionadamente
         break;
     }
 

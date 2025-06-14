@@ -10,7 +10,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LayoutPageComponent } from './pages/layout-page/layout-page.component';
 import { MainPageComponent } from './pages/main-page/main-page.component';
 import { SoporteComponent } from './pages/soporte/soporte.component';
-import { LogsComponent } from './pages/logs/logs.component';
 
 import { AllEnterprisesModule } from './pages/all-enterprises/all-enterprises.module';
 import { MyEnterpriseModule } from './pages/my-enterprise/my.enterprise.module';
@@ -25,7 +24,6 @@ import { ProyectosModule } from './pages/proyectos/proyectos.module';
     LayoutPageComponent,         // Contenedor base para las vistas del módulo
     MainPageComponent,           // Página de inicio tras el login
     SoporteComponent,            // Vista para enviar tickets de soporte
-    LogsComponent                // Vista de registros de Logs (No implementado)
   ],
   imports: [
     CommonModule,

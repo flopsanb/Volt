@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { EnterprisesService } from 'src/app/services/enterprises.service';
 
 /**
@@ -12,12 +11,10 @@ import { EnterprisesService } from 'src/app/services/enterprises.service';
   styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent implements OnInit {
-  idEmpresa = Number(localStorage.getItem('id_empresa'));           // ID de empresa extraído del almacenamiento local
   nombreUsuario = localStorage.getItem('nombre_publico');           // Nombre del usuario autenticado
   nombreEmpresa: string = '';                                       // Nombre de la empresa recuperado del backend
 
   constructor(
-    private router: Router,
     private enterpriseService: EnterprisesService
   ) {}
 
