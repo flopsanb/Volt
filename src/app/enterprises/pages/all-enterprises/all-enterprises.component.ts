@@ -33,7 +33,7 @@ export class AllEnterprisesComponent implements OnInit {
   proyectosTotalesFilter = new FormControl('');
 
   selection: SelectionModel<Enterprise> = new SelectionModel<Enterprise>(false, []);
-  displayedColumns: string[] = ['id_empresa', 'logo_url', 'nombre_empresa', 'empleados_totales', 'proyectos_totales'];
+  displayedColumns: string[] = [];
 
   private filterValues = {
     id_empresa: '',
@@ -67,6 +67,7 @@ export class AllEnterprisesComponent implements OnInit {
       this.dataSource.filterPredicate = this.createFilter();
       this.onChanges();
 
+      this.displayedColumns = ['id_empresa', 'logo_url', 'nombre_empresa', 'empleados_totales', 'proyectos_totales'];
       if (
         this.tienePermisos('gestionar_empresas') &&
         this.tienePermisos('borrar_empresas')

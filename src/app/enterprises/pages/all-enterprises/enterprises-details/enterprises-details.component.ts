@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormControl } from '@angular/forms';
 import { SelectionModel } from '@angular/cdk/collections';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { Usuario } from 'src/app/enterprises/interfaces/usuario';
 import { Enterprise } from 'src/app/enterprises/interfaces/enterprise.interface';
@@ -56,6 +57,8 @@ export class EnterprisesDetailsComponent implements OnInit {
   // IDs de usuarios actualmente conectados (revisado por el backend)
   usuariosConectados: number[] = [];
 
+  form!: FormGroup;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { empresa: Enterprise }, // Empresa recibida desde el diálogo
     private usuarioService: UsuarioService,
@@ -63,7 +66,8 @@ export class EnterprisesDetailsComponent implements OnInit {
     private estadoConexionService: EstadoConexionService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private dialogRef: MatDialogRef<EnterprisesDetailsComponent>
+    private dialogRef: MatDialogRef<EnterprisesDetailsComponent>,
+    private fb: FormBuilder
   ) {
     this.empresa = data.empresa;
   }
@@ -75,8 +79,15 @@ export class EnterprisesDetailsComponent implements OnInit {
    * - Configura el filtro de búsqueda.
    */
   ngOnInit(): void {
+    // Inicializar formulario con los mismos validadores del AddEnterpriseComponent
+    this.form = this.fb.group({
+      nombre_empresa: [this.empresa.nombre_empresa, [Validators.required, Validators.minLength(4)]],
+      logo_url: [this.empresa.logo_url || '']
+    });
+
     this.getUsuarios();
     this.obtenerConectados();
+
     this.searchControl.valueChanges.subscribe(value => {
       this.applyFilter(value ?? '');
     });
@@ -174,22 +185,22 @@ export class EnterprisesDetailsComponent implements OnInit {
    * Guarda los cambios en el nombre o logo de la empresa.
    */
   async save() {
-    if (!this.empresa.nombre_empresa) {
-      this.snackBar.open('El nombre de la empresa es obligatorio', 'Cerrar', { duration: 4000 });
+    if (this.form.invalid) {
+      this.snackBar.open('Corrige los errores del formulario antes de guardar.', 'Cerrar', { duration: 4000 });
       return;
     }
 
     const empresaUpdate = {
       id_empresa: this.empresa.id_empresa,
-      nombre_empresa: this.empresa.nombre_empresa ?? '',
-      logo_url: this.empresa.logo_url ?? ''
+      nombre_empresa: this.form.value.nombre_empresa,
+      logo_url: this.form.value.logo_url
     };
 
     const RESPONSE = await this.enterpriseService.updateEmpresa(empresaUpdate).toPromise();
 
-    if (RESPONSE && RESPONSE.ok) {
+    if (RESPONSE?.ok) {
       this.snackBar.open(RESPONSE.message ?? 'Empresa actualizada', 'Cerrar', { duration: 5000 });
-      this.dialogRef.close({ ok: RESPONSE.ok, empresa: this.empresa });
+      this.dialogRef.close({ ok: true, empresa: empresaUpdate });
     } else {
       this.snackBar.open(RESPONSE?.message ?? 'Error al actualizar empresa', 'Cerrar', { duration: 5000 });
     }

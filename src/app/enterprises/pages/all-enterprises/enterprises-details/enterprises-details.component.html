@@ -1,25 +1,34 @@
 <!-- Título principal de la sección -->
 <h2>Detalles de empresa</h2>
 
-<!-- Campo de texto para el nombre de la empresa -->
-<mat-form-field appearance="fill" class="w-100">
-  <mat-label>Nombre de la empresa</mat-label>
-  <!-- Editable solo si 'editMode' está activado -->
-  <input matInput [readonly]="!editMode" [(ngModel)]="empresa.nombre_empresa">
-</mat-form-field>
+<!-- Formulario reactivo -->
+<form [formGroup]="form" class="w-100">
 
-<!-- Campo de texto para la URL del logo de la empresa -->
-<mat-form-field appearance="fill" class="w-100">
-  <mat-label>URL del logo</mat-label>
-  <!-- Editable solo si 'editMode' está activado -->
-  <input matInput [readonly]="!editMode" [(ngModel)]="empresa.logo_url" placeholder="https://ejemplo.com/logo.png">
-</mat-form-field>
+  <!-- Campo de texto para el nombre de la empresa -->
+  <mat-form-field appearance="fill" class="w-100">
+    <mat-label>Nombre de la empresa</mat-label>
+    <input matInput formControlName="nombre_empresa" [readonly]="!editMode" placeholder="Indica el nombre" />
+    <mat-error *ngIf="form.controls['nombre_empresa'].hasError('required') && form.controls['nombre_empresa'].touched">
+      El nombre es obligatorio.
+    </mat-error>
+    <mat-error *ngIf="form.controls['nombre_empresa'].hasError('minlength') && form.controls['nombre_empresa'].touched">
+      El nombre debe tener al menos 4 caracteres.
+    </mat-error>
+  </mat-form-field>
 
-<!-- Vista previa del logo si hay una URL válida -->
-<div *ngIf="empresa.logo_url" class="logo-preview mb-2">
-  <img [src]="empresa.logo_url" alt="Logo empresa" width="150"
-       style="border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2)">
-</div>
+  <!-- Campo de texto para la URL del logo de la empresa -->
+  <mat-form-field appearance="fill" class="w-100">
+    <mat-label>URL del logo</mat-label>
+    <input matInput formControlName="logo_url" [readonly]="!editMode" placeholder="https://ejemplo.com/logo.png">
+  </mat-form-field>
+
+  <!-- Vista previa del logo si hay una URL válida -->
+  <div *ngIf="form.get('logo_url')?.value" class="logo-preview mb-2">
+    <img [src]="form.get('logo_url')?.value" alt="Logo empresa" width="150"
+         style="border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2)">
+  </div>
+
+</form>
 
 <!-- Botón para activar o bloquear la edición de datos -->
 <button mat-stroked-button color="primary" (click)="toggleEdit()">
@@ -80,11 +89,9 @@
   <ng-container matColumnDef="acciones">
     <th mat-header-cell *matHeaderCellDef>Acciones</th>
     <td mat-cell *matCellDef="let user">
-      <!-- Botón de edición -->
       <button mat-icon-button color="primary" (click)="editUsuario(user)">
         <mat-icon>edit</mat-icon>
       </button>
-      <!-- Botón de eliminación -->
       <button mat-icon-button color="warn" (click)="deleteUsuario(user)">
         <mat-icon>delete</mat-icon>
       </button>
@@ -98,6 +105,6 @@
 
 <!-- Botones finales para guardar o cancelar cambios -->
 <div class="mt-4">
-  <button mat-raised-button class="confirmar" (click)="save()">Guardar</button>
+  <button mat-raised-button class="confirmar" color="primary" (click)="save()">Guardar</button>
   <button mat-button class="cancelar" (click)="onNoClick()">Cancelar</button>
 </div>
