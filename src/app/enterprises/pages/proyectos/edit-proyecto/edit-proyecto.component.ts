@@ -5,6 +5,7 @@ import { ProjectService } from 'src/app/services/projects.service';
 import { EnterprisesService } from 'src/app/services/enterprises.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Project } from 'src/app/enterprises/interfaces/project.interface';
+import { CustomValidators } from 'src/app/validators/custom-validators';
 
 @Component({
   selector: 'app-edit-proyecto',
@@ -28,7 +29,7 @@ export class EditProyectoComponent implements OnInit {
     // Inicializamos el formulario con los valores del proyecto a editar
     this.form = this.fb.group({
       nombre_proyecto: [data.nombre_proyecto, [Validators.required, Validators.minLength(4)]],
-      iframe_proyecto: [data.iframe_proyecto, [Validators.required]],
+      iframe_proyecto: [data.iframe_proyecto, [Validators.required, CustomValidators.iframeValid]],
       visible: [!!data.visible],
       habilitado: [!!data.habilitado],
       id_empresa: [data.id_empresa, Validators.required]

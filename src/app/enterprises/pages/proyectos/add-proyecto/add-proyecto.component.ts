@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProjectService } from 'src/app/services/projects.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EnterprisesService } from 'src/app/services/enterprises.service';
+import { CustomValidators } from 'src/app/validators/custom-validators';
 
 @Component({
   selector: 'app-add-proyecto',
@@ -23,7 +24,7 @@ export class AddProyectoComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       nombre_proyecto: ['', [Validators.required, Validators.minLength(3)]],
-      iframe_proyecto: ['', Validators.required],
+      iframe_proyecto: ['', [Validators.required, CustomValidators.iframeValid]],
       visible: [true],
       habilitado: [true],
       id_empresa: [null, Validators.required]

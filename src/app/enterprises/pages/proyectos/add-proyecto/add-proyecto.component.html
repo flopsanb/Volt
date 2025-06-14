@@ -13,7 +13,7 @@
           ❌ El nombre es obligatorio.
         </mat-error>
         <mat-error *ngIf="form.controls['nombre_proyecto'].hasError('minlength')">
-          ❌ Mínimo 4 caracteres.
+          ❌ El nombre del proyecto debe tener al menos 3 caracteres.
         </mat-error>
       </mat-form-field>
     </div>
@@ -25,6 +25,9 @@
         <textarea matInput rows="4" formControlName="iframe_proyecto"></textarea>
         <mat-error *ngIf="form.controls['iframe_proyecto'].hasError('required')">
           ❌ El iframe es obligatorio.
+        </mat-error>
+        <mat-error *ngIf="form.controls['iframe_proyecto'].hasError('iframeInvalid') && form.controls['iframe_proyecto'].touched">
+          ❌ El iframe debe ser válido y provenir de https://app.powerbi.com
         </mat-error>
       </mat-form-field>
     </div>
