@@ -26,12 +26,12 @@ export class MainPageComponent implements OnInit {
    * para obtener el nombre de la empresa correspondiente al usuario autenticado.
    */
   ngOnInit(): void {
-    this.enterpriseService.getEmpresaById(this.idEmpresa).subscribe({
+    this.enterpriseService.getMyEmpresas().subscribe({
       next: (empresa) => {
         this.nombreEmpresa = empresa?.data.nombre_empresa ?? 'tu empresa';
       },
       error: () => {
-        this.nombreEmpresa = 'tu empresa';               // Fallback en caso de error
+        this.nombreEmpresa = 'tu empresa';
       }
     });
   }

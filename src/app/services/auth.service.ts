@@ -62,33 +62,6 @@ export class AuthService {
     );
   }
 
-  /** ========= RECUPERAR CONTRASEÑA ========= */
-
-  resetPassword(data: { email: string }): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(
-      `${URL_API}/olvidar_pwd.php`,
-      JSON.stringify(data),
-      {
-        headers: this.commonService.headers,
-        withCredentials: true
-      }
-    );
-  }
-
-  checkPassToken(tokenPasswd: string): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(
-      `${URL_API}/check_token_passwd.php`,
-      JSON.stringify({ token: tokenPasswd })
-    );
-  }
-
-  generateNewPass(data: any): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(
-      `${URL_API}/reset_pass.php`,
-      JSON.stringify(data)
-    );
-  }
-
   /** ========= VALIDAR USUARIO ========= */
 
   checkUser(usuario: string): Observable<boolean> {
@@ -128,8 +101,6 @@ export class AuthService {
 
   // Envía un heartbeat al backend para mantener el estado de conexión
   private sendHeartbeat(id_usuario: number, token: string, inicial: boolean = false): void {
-    const mensaje = inicial ? "Primer heartbeat" : "Heartbeat regular";
-
     fetch(`${URL_API}/estado_conexion.php?action=registrar`, {
       method: 'POST',
       headers: {

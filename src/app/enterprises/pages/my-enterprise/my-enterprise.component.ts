@@ -133,12 +133,14 @@ export class MyEnterpriseComponent implements OnInit {
     }
 
     this.enterpriseService.updateMyEmpresa(this.empresa).subscribe(res => {
-      if (res.ok) {
+      if (res && res.ok) {
         this.snackBar.open(res.message ?? 'Empresa actualizada correctamente', 'Cerrar', { duration: 3000 });
         this.editMode = false;
       } else {
-        this.snackBar.open(res.message ?? 'Error al actualizar la empresa', 'Cerrar', { duration: 3000 });
+        this.snackBar.open(res?.message ?? 'Error al actualizar la empresa', 'Cerrar', { duration: 3000 });
       }
+    }, error => {
+      this.snackBar.open('❌ Error inesperado del servidor', 'Cerrar', { duration: 3000 });
     });
   }
 
