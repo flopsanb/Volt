@@ -8,6 +8,8 @@ import { UsuarioService } from 'src/app/services/usuario.service';
 import { RolesService } from 'src/app/services/roles.service';
 import { Rol } from 'src/app/enterprises/interfaces/rol';
 
+import { CustomValidators } from 'src/app/validators/custom-validators';
+
 @Component({
   selector: 'app-edit-usuario',
   templateUrl: './edit-usuario.component.html',
@@ -28,10 +30,10 @@ export class EditUsuarioComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       id_usuario: [data.id_usuario],
-      usuario: [data.usuario, Validators.required],
-      password: [''],
-      nombre_publico: [data.nombre_publico, Validators.required],
-      email: [data.email ?? '', [Validators.required, Validators.email]],
+      usuario: [data.usuario, [Validators.required, CustomValidators.username]],
+      password: ['', [CustomValidators.strongPassword]],
+      nombre_publico: [data.nombre_publico, [Validators.required, CustomValidators.publicName]],
+      email: [data.email ?? '', [Validators.required, CustomValidators.strictEmail]],
       observaciones: [data.observaciones ?? ''],
       id_rol: [data.id_rol, Validators.required],
       id_empresa: [data.id_empresa, Validators.required],

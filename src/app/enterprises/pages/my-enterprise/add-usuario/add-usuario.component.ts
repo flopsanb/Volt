@@ -1,10 +1,13 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { RolesService } from 'src/app/services/roles.service';
 import { Usuario } from 'src/app/enterprises/interfaces/usuario';
 import { Rol } from 'src/app/enterprises/interfaces/rol';
+import { CustomValidators } from 'src/app/validators/custom-validators';
+
 
 @Component({
   selector: 'app-add-usuario',
@@ -13,30 +16,30 @@ import { Rol } from 'src/app/enterprises/interfaces/rol';
 })
 export class AddUsuarioComponent implements OnInit {
 
-  usuario: Usuario = {
-    usuario: '',
-    nombre_publico: '',
-    id_rol: null,
-    id_empresa: null,
-    habilitado: 1,
-    email: '',
-    observaciones: ''
-  };
-
-  password: string = '';
+  form: FormGroup;
   roles: Rol[] = [];
 
   constructor(
+    private fb: FormBuilder,
     public dialogRef: MatDialogRef<AddUsuarioComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { id_empresa: number },
     private usuarioService: UsuarioService,
     private rolesService: RolesService,
     private snackBar: MatSnackBar
-  ) {}
+  ) {
+    this.form = this.fb.group({
+      usuario: ['', [Validators.required, CustomValidators.username]],
+      password: ['', [Validators.required, CustomValidators.strongPassword]],
+      nombre_publico: ['', [Validators.required, CustomValidators.publicName]],
+      email: ['', [Validators.required, CustomValidators.strictEmail]],
+      observaciones: [''],
+      id_rol: [null, Validators.required],
+      id_empresa: [data.id_empresa, Validators.required],
+      habilitado: [true]
+    });
+  }
 
   ngOnInit(): void {
-    this.usuario.id_empresa = this.data.id_empresa;
-
     const rolActual = parseInt(localStorage.getItem('id_rol') || '0', 10);
 
     if (rolActual === 1 || rolActual === 2) {
@@ -60,24 +63,16 @@ export class AddUsuarioComponent implements OnInit {
     }
   }
 
+
   saveChanges(): void {
-    if (
-      !this.usuario.usuario.trim() ||
-      !this.password.trim() ||
-      !this.usuario.nombre_publico.trim() ||
-      !this.usuario.email.trim() ||
-      !this.usuario.id_rol ||
-      !this.usuario.id_empresa
-    ) {
-      this.snackBar.open('❌ Todos los campos obligatorios deben estar completos.', 'Cerrar', { duration: 3000 });
+    if (this.form.invalid) {
+      this.snackBar.open('❌ Revisa los campos del formulario, hay errores.', 'Cerrar', { duration: 3000 });
       return;
     }
 
-    this.usuario.habilitado = this.usuario.habilitado ? 1 : 0;
-
     const payload = {
-      ...this.usuario,
-      password: this.password
+      ...this.form.value,
+      habilitado: this.form.value.habilitado ? 1 : 0
     };
 
     this.usuarioService.addUsuario(payload).subscribe({
