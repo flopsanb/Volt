@@ -89,17 +89,23 @@ export class MyEnterpriseComponent implements OnInit {
   }
 
   cargarEmpresa(id_empresa: number): void {
+    console.log('📡 Cargando empresa con ID:', id_empresa);
     this.enterpriseService.getEmpresaById(id_empresa).subscribe(res => {
+      console.log('✅ Respuesta getEmpresaById:', res);
       if (res.ok) {
         this.empresa = res.data;
       } else {
         this.snackBar.open(res.message ?? 'Error al cargar la empresa', 'Cerrar', { duration: 3000 });
       }
+    }, err => {
+      console.error('❌ Error al obtener empresa:', err);
     });
   }
 
   cargarUsuarios(id_empresa: number): void {
+    console.log('📡 Cargando usuarios de empresa ID:', id_empresa);
     this.usuarioService.getUsuariosByEmpresa(id_empresa).subscribe(res => {
+      console.log('✅ Respuesta getUsuariosByEmpresa:', res);
       if (res.ok) {
         this.dataSource.data = res.data;
         this.rawPermises = res.permises || {};
@@ -116,6 +122,8 @@ export class MyEnterpriseComponent implements OnInit {
       } else {
         this.snackBar.open(res.message ?? 'Error al cargar usuarios', 'Cerrar', { duration: 3000 });
       }
+    }, err => {
+      console.error('❌ Error al cargar usuarios:', err);
     });
   }
 
@@ -132,7 +140,9 @@ export class MyEnterpriseComponent implements OnInit {
       return;
     }
 
+    console.log('📤 Guardando cambios en empresa:', this.empresa);
     this.enterpriseService.updateMyEmpresa(this.empresa).subscribe(res => {
+      console.log('✅ Respuesta updateMyEmpresa:', res);
       if (res && res.ok) {
         this.snackBar.open(res.message ?? 'Empresa actualizada correctamente', 'Cerrar', { duration: 3000 });
         this.editMode = false;
@@ -140,6 +150,7 @@ export class MyEnterpriseComponent implements OnInit {
         this.snackBar.open(res?.message ?? 'Error al actualizar la empresa', 'Cerrar', { duration: 3000 });
       }
     }, error => {
+      console.error('❌ Error al actualizar empresa:', error);
       this.snackBar.open('❌ Error inesperado del servidor', 'Cerrar', { duration: 3000 });
     });
   }
@@ -181,10 +192,16 @@ export class MyEnterpriseComponent implements OnInit {
   }
 
   obtenerConectados(): void {
+    console.log('📡 Obteniendo usuarios conectados...');
     this.estadoConexionService.getConectados().subscribe(res => {
+      console.log('✅ Respuesta getConectados:', res);
       if (res.ok) {
         this.usuariosConectados = res.data;
+      } else {
+        console.warn('⚠️ Error al obtener conectados:', res.message);
       }
+    }, err => {
+      console.error('❌ Error al obtener conectados:', err);
     });
   }
 

@@ -80,18 +80,20 @@ export class AuthService {
   /** ========= HEARTBEAT (conexión activa) ========= */  
   public startHeartbeat(): void {
     this.stopHeartbeat(); // Limpia cualquier intervalo previo
+    console.log('[HEARTBEAT] Iniciando secuencia...');
 
     const tryStart = () => {
       const id_usuario = localStorage.getItem('id_usuario');
-      const token = localStorage.getItem('token');
 
-      if (!id_usuario || !token) {
+      if (!id_usuario) {
         setTimeout(tryStart, 500); // Reintenta en 500ms si aún no está disponible
         return;
       }
 
+      console.log('[HEARTBEAT] Primer heartbeat lanzado con id_usuario:', id_usuario);
       this.sendHeartbeat(parseInt(id_usuario)); // Primer heartbeat
       this.heartbeatIntervalId = setInterval(() => {
+        console.log('[HEARTBEAT] Intervalo activo: enviando ping de vida...')
         this.sendHeartbeat(parseInt(id_usuario));
       }, 60 * 1000);
     };
@@ -101,13 +103,19 @@ export class AuthService {
 
   // Envía un heartbeat al backend para mantener el estado de conexión
   private sendHeartbeat(id_usuario: number): void {
+    console.log('[HEARTBEAT] Enviando heartbeat al backend con id_usuario:', id_usuario);
     this.http.post<ApiResponse>(
       `${URL_API}/estado_conexion.php`,
       { id_usuario },
       { headers: this.commonService.headers }
     ).pipe(
-      catchError(() => of(null)) // Ignora errores
-    ).subscribe();
+      catchError((err) => {
+        console.error('[HEARTBEAT] Error en petición heartbeat:', err);
+        return of(null);
+      })
+    ).subscribe((res) => {
+      console.log('[HEARTBEAT] Respuesta del backend:', res);
+    });
   }
 
   // Detiene el envío automático de heartbeats
@@ -131,6 +139,6 @@ export class AuthService {
       { type: 'application/json' }
     );
 
-    navigator.sendBeacon(`${URL_API}/estado_conexion.php?action=logout`, blob);
+    navigator.sendBeacon(`${URL_API}/estado_conexion.php`, blob);
   }
 }
