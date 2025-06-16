@@ -1,32 +1,88 @@
-# VoltFencerApp
+# ⚡ VoltFencerApp
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.16.
+VoltFencerApp es una aplicación web desarrollada con **Angular 16**, **Angular Material** y **PHP** que permite a empresas de todos los tamaños visualizar sus informes de **Power BI embebidos**, gestionar usuarios y proyectos, y monitorizar riesgos climáticos de forma eficiente, segura y personalizada.
 
-## Development server
+> Este sistema está diseñado para entornos **multiempresa**, con gestión por roles, control de accesos y permisos, autenticación mediante token, y un diseño profesional basado en **gris, blanco y amarillo**, colores que representan energía, tecnología y solidez.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+---
 
-## Code scaffolding
+## 📂 Repositorios del proyecto
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- **Frontend (Angular)**  
+  🔗 https://github.com/flopsanb/VoltFencerFrontend
 
-## Build
+- **Backend (PHP + MySQL)**  
+  🔗 https://github.com/flopsanb/VoltFencerBackend
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+---
 
-## Running unit tests
+## 🧰 Tecnologías utilizadas
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+- Angular 16 + Angular Material  
+- SCSS personalizado (tema corporativo gris/blanco/amarillo)  
+- PHP 8.x (API RESTful)  
+- MySQL (estructura relacional optimizada)  
+- Power BI embebido con iframe  
+- Autenticación por token  
+- Control de roles y permisos  
+- Sistema heartbeat y conexión en tiempo real  
+- Librerías: `concurrently`, `ngx-cookie-service`, `primeflex`
 
-## Running end-to-end tests
+---
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## 🚀 Instrucciones de instalación y ejecución
 
-## Further help
+### 1. Clonar los repositorios
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+# Clonar frontend
+git clone https://github.com/flopsanb/VoltFencerFrontend.git
+cd VoltFencerFrontend
 
-## VoltFencerApp
-1. Ejecutamos "npm install"
-2. Iniciamos el backend "npm run backend"
-3. Iniciar la app "npm start" o "ng serve -o"
+# Clonar backend en el mismo nivel
+git clone https://github.com/flopsanb/VoltFencerBackend.git
+
+---
+
+## Estructura resultante:
+
+TuCarpeta/
+├── VoltFencerFrontend/
+└── VoltFencerBackend/
+
+---
+
+## 🗂️ 2. Instalar dependencias del frontend
+
+npm install
+
+---
+
+## ⚙️ 3. Iniciar el backend (PHP)
+
+npm run backend
+
+---
+
+## 🅰️ 4. Iniciar la aplicación Angular
+
+npm start
+# o bien
+ng serve -o
+
+---
+
+## 🔁 5. (Opcional) Iniciar frontend + backend a la vez
+
+npm run start-all
+
+---
+
+## ✅ Requisitos previos
+
+Node.js (v18 o superior)
+Angular CLI instalado globalmente: npm install -g @angular/cli
+PHP 8.x
+Servidor MySQL
+Base de datos gestion_proyectos correctamente importada y configurada
+
+```bash

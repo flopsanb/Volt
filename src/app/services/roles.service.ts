@@ -5,7 +5,7 @@ import { Rol } from '../enterprises/interfaces/rol';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../auth/interfaces/api-response';
 
-const ENDPOINT = 'rol';
+const ENDPOINT = 'permisos_rol';
 
 /**
  * Servicio que gestiona las operaciones CRUD sobre los roles de usuario.

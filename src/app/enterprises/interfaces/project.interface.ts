@@ -7,7 +7,7 @@ export interface Project {
   nombre_proyecto: string;         // Título o nombre del proyecto
   id_empresa: number;              // ID de la empresa propietaria
   fecha_creacion: string;          // Fecha de creación del proyecto
-  iframe_proyecto: string;         // URL embebida del informe (Power BI, etc.)
+  iframe_proyecto: string;         // URL embebida del informe (Power BI)
   visible: number;                 // Indica si el proyecto está visible (1) u oculto (0)
   habilitado: number;              // Indica si está habilitado (1) o deshabilitado (0)
   nombre_empresa?: string;         // Nombre de la empresa (usado en listados combinados)

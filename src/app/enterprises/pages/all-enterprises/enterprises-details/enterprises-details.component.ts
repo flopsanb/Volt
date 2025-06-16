@@ -93,16 +93,12 @@ export class EnterprisesDetailsComponent implements OnInit {
     });
   }
 
-  /**
-   * Activa o desactiva el modo edición del nombre/logo.
-   */
+  // Activa o desactiva el modo edición del nombre/logo.
   toggleEdit(): void {
     this.editMode = !this.editMode;
   }
 
-  /**
-   * Obtiene todos los usuarios de la empresa desde el backend.
-   */
+  // Obtiene todos los usuarios de la empresa desde el backend.
   getUsuarios(): void {
     this.usuarioService.getUsuariosByEmpresa(this.empresa.id_empresa).subscribe(res => {
       if (res.ok) {
@@ -112,9 +108,7 @@ export class EnterprisesDetailsComponent implements OnInit {
     });
   }
 
-  /**
-   * Aplica el filtro de búsqueda sobre la lista de usuarios.
-   */
+  // Aplica el filtro de búsqueda sobre la lista de usuarios.
   applyFilter(value: string): void {
     this.filterValue = value;
     const filterValueLower = value.toLowerCase();
@@ -124,9 +118,7 @@ export class EnterprisesDetailsComponent implements OnInit {
     );
   }
 
-  /**
-   * Consulta al backend qué usuarios están actualmente conectados.
-   */
+  // Consulta al backend qué usuarios están actualmente conectados.
   obtenerConectados(): void {
     this.estadoConexionService.getConectados().subscribe(res => {
       if (res.ok) {
@@ -142,9 +134,7 @@ export class EnterprisesDetailsComponent implements OnInit {
     return this.usuariosConectados.includes(id);
   }
 
-  /**
-   * Abre el diálogo para añadir un nuevo usuario a la empresa.
-   */
+  // Abre el diálogo para añadir un nuevo usuario a la empresa.
   addUsuario(): void {
     const dialogRef = this.dialog.open(AddUsuarioComponent, {
       data: { id_empresa: this.empresa.id_empresa }
@@ -155,9 +145,8 @@ export class EnterprisesDetailsComponent implements OnInit {
     });
   }
 
-  /**
-   * Abre el diálogo para editar un usuario existente.
-   */
+
+  // Abre el diálogo para editar un usuario existente.
   editUsuario(usuario: Usuario): void {
     const dialogRef = this.dialog.open(EditUsuarioComponent, {
       data: usuario
@@ -168,9 +157,7 @@ export class EnterprisesDetailsComponent implements OnInit {
     });
   }
 
-  /**
-   * Abre el diálogo de confirmación para eliminar un usuario.
-   */
+  // Abre el diálogo de confirmación para eliminar un usuario.
   deleteUsuario(usuario: Usuario): void {
     const dialogRef = this.dialog.open(DeleteUsuarioComponent, {
       data: usuario
@@ -181,9 +168,7 @@ export class EnterprisesDetailsComponent implements OnInit {
     });
   }
 
-  /**
-   * Guarda los cambios en el nombre o logo de la empresa.
-   */
+  // Guarda los cambios en el nombre o logo de la empresa.
   async save() {
     if (this.form.invalid) {
       this.snackBar.open('Corrige los errores del formulario antes de guardar.', 'Cerrar', { duration: 4000 });
@@ -206,16 +191,12 @@ export class EnterprisesDetailsComponent implements OnInit {
     }
   }
 
-  /**
-   * Cierra el diálogo sin guardar.
-   */
+  // Cierra el diálogo sin guardar.
   onNoClick() {
     this.dialogRef.close({ ok: false });
   }
 
-  /**
-   * Activa el modo de edición con los datos de la empresa proporcionada.
-   */
+  // Activa el modo de edición con los datos de la empresa proporcionada.
   editEnterprise(enterprise: Enterprise) {
     this.empresa = enterprise;
     this.toggleEdit();

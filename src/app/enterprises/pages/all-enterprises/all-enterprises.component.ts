@@ -24,15 +24,22 @@ export class AllEnterprisesComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator | null = null;
   @ViewChild(MatSort, { static: true }) sort: MatSort | null = null;
 
+  // Fuente de datos para la tabla de empresas
   dataSource: MatTableDataSource<Enterprise> = new MatTableDataSource();
+
+  // Permisos del usuario actual cargados desde el backend
   rawPermises: { [key: string]: number } = {};
 
+  // Controles para filtros individuales por columna
   idEmpresaFilter = new FormControl('');
   nombreEmpresaFilter = new FormControl('');
   empleadosTotalesFilter = new FormControl('');
   proyectosTotalesFilter = new FormControl('');
 
+  // Modelo de selección de filas (solo una a la vez)
   selection: SelectionModel<Enterprise> = new SelectionModel<Enterprise>(false, []);
+
+  // Columnas visibles en la tabla
   displayedColumns: string[] = [];
 
   private filterValues = {
@@ -48,14 +55,17 @@ export class AllEnterprisesComponent implements OnInit {
     private overlay: Overlay
   ) {}
 
+  // Método que se ejecuta al iniciar el componente
   ngOnInit(): void {
     this.getEnterprises();
   }
 
+  // Verifica si el usuario tiene un permiso específico
   tienePermisos(clave: string): boolean {
     return this.rawPermises?.[clave] === 1;
   }
 
+  // Carga la lista de empresas desde el backend y configura la tabla
   async getEnterprises() {
     const RESPONSE = await this.enterpriseService.getAllEmpresas().toPromise();
     this.rawPermises = RESPONSE?.permises ?? {};
@@ -68,6 +78,8 @@ export class AllEnterprisesComponent implements OnInit {
       this.onChanges();
 
       this.displayedColumns = ['id_empresa', 'logo_url', 'nombre_empresa', 'empleados_totales', 'proyectos_totales'];
+
+      // Añade la columna de acciones si el usuario tiene los permisos correspondientes
       if (
         this.tienePermisos('gestionar_empresas') &&
         this.tienePermisos('borrar_empresas')
@@ -77,6 +89,7 @@ export class AllEnterprisesComponent implements OnInit {
     }
   }
 
+  // Abre el diálogo para añadir una nueva empresa
   async addEnterprise() {
     if (!this.tienePermisos('crear_empresas')) return;
 
@@ -89,6 +102,7 @@ export class AllEnterprisesComponent implements OnInit {
     }
   }
 
+  // Abre el diálogo para editar una empresa existente
   async editEnterprise(empresa: Enterprise) {
     if (!this.tienePermisos('gestionar_empresas')) return;
 
@@ -102,6 +116,7 @@ export class AllEnterprisesComponent implements OnInit {
     }
   }
 
+  // Abre el diálogo para eliminar una empresa existente
   async deleteEnterprise(empresa: Enterprise) {
     if (!this.tienePermisos('borrar_empresas')) return;
 
@@ -125,6 +140,7 @@ export class AllEnterprisesComponent implements OnInit {
     };
   }
 
+  // Configura los filtros reactivos para cada campo de búsqueda
   onChanges() {
     this.idEmpresaFilter.valueChanges.subscribe(value => {
       this.filterValues.id_empresa = value ?? '';
@@ -147,6 +163,7 @@ export class AllEnterprisesComponent implements OnInit {
     });
   }
 
+  // Abre el diálogo con los detalles de la empresa seleccionada
   async openEnterpriseDetails(empresa: Enterprise) {
     const dialogRef = this.dialog.open(EnterprisesDetailsComponent, {
       width: '70em',

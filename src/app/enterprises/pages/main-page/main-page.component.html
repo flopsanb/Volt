@@ -1,15 +1,21 @@
 <!--
-  Vista principal tras el login.
-  Se muestra un saludo personalizado al usuario, el nombre de su empresa
-  y el logo corporativo en el centro de la página.
+  Página principal que se muestra tras el inicio de sesión.
+  Muestra un mensaje de bienvenida al usuario autenticado,
+  el nombre de la empresa asociada y el logotipo correspondiente.
 -->
 <div class="main-wrapper">
+
+  <!-- Mensaje de bienvenida personalizado con el nombre del usuario -->
   <h1>Bienvenido, {{ nombreUsuario }}.</h1>
+
+  <!-- Subtítulo con información sobre los informes accesibles para la empresa -->
   <p class="sub">
     <strong>
       En esta aplicación podrá ver todos los informes activos de los proyectos de {{ nombreEmpresa }}.
     </strong>
   </p>
 
+  <!-- Logotipo corporativo mostrado en el centro de la página -->
   <img src="../../../../assets/logo_sin_fondo.png">
+
 </div>
