@@ -41,7 +41,7 @@ export class EditUsuarioComponent implements OnInit {
   ngOnInit(): void {
     const rolActual = parseInt(localStorage.getItem('id_rol') || '0', 10);
 
-    this.rolesService.getAllRoles(rolActual).subscribe({
+    this.rolesService.getAllRoles().subscribe({
       next: (res) => {
         this.roles = res.data ?? [];
         if (rolActual === 2) {

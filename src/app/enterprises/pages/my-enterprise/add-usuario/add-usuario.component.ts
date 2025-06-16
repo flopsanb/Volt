@@ -43,7 +43,7 @@ export class AddUsuarioComponent implements OnInit {
     const rolActual = parseInt(localStorage.getItem('id_rol') || '0', 10);
 
     if (rolActual === 1 || rolActual === 2) {
-      this.rolesService.getAllRoles(rolActual).subscribe({
+      this.rolesService.getAllRoles().subscribe({
         next: (res) => {
           this.roles = res.data ?? [];
         },

@@ -17,8 +17,8 @@ export class RolesService {
 
   constructor(private http: HttpClient) {}
 
-  getAllRoles(id: number): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(`${URL_API}/${ENDPOINT}.php?id=${id}`);
+  getAllRoles(): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(`${URL_API}/${ENDPOINT}.php`);
   }
 
   addRol(rol: Rol): Observable<ApiResponse> {
